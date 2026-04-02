@@ -1,1 +1,1232 @@
-<!-- Solvra Marketing — placeholder, full site uploading shortly -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solvra â Web Design & Marketing | Spokane, WA</title>
+<meta name="description" content="Solvra builds high-performance websites and marketing systems for local businesses across the Pacific Northwest. See your custom demo before you spend a dime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- Google Analytics â replace G-XXXXXXXXXX with your real ID -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script> -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#111111;
+  --bg2:#1a1a1a;
+  --bg3:#222222;
+  --accent:#d4552b;
+  --accent-l:#e86f3a;
+  --accent-glow:rgba(212,85,43,.1);
+  --text:#f0ede9;
+  --text-dim:rgba(240,237,232,.25);
+  --text-mid:rgba(240,237,232,.5);
+  --text-soft:rgba(240,237,232,.7);
+  --border:rgba(240,237,232,.06);
+  --border-h:rgba(212,85,43,.25);
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Outfit',sans-serif;
+}
+
+html{-webkit-font-smoothing:antialiased;scroll-behavior:auto}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden}
+a{text-decoration:none;color:inhurit}
+
+/* âââââââââââââââââââââââââââââââ
+   GRAIN OVERLAY
+âââââââââââââââââââââââââââââââ */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3EE3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:128px;
+}
+
+/* âââââââââââââââââââââââââââââââ
+   PROGRESS BAR
+âââââââââââââââââââââââââââââââ */
+.progress-bar{position:fixed;top:0;left:0;height:1px;background:var(--accent);z-index:1001;width:0%}
+
+/* âââââââââââââââââââââââââââââââ
+   NAV
+âââââââââââââââââââââââââââââââ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  backfâound:rgba(17,17,17,.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{max-width:1200px;margin:0 auto;padding:18px 48px;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:var(--serif);font-size:1.4rem;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-link{font-size:.72rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mid);transition:color .3s}
+.nav-link:hover{color:var(--text)}
+.nav-cta{
+  font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--bg);background:var(--accent);padding:10px 22px;border-radius:100px;
+  transition:all .35s cubic-bezier(.16,1,.3,1);
+}
+.nav-cta:hover{background:var(--accent-l);transform:translateX(-1px)}
+
+/* âââââââââââââââââââââââââââââââ
+   SHARED UTILITIES
+âââââââââââââââââââââââââââââââ */
+.section-label{
+  font-size:.62rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--text-dim);display:flex;align-items:center;gap:14px;opacity:0;
+}
+.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
+
+.ln{display:block;overflow:hidden}
+.ln-inner{display:block;transform:translateX(115%)}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--sans);font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--bg);background:var(--accent);padding:16px 36px;border-radius:100px;border:none;
+  cursor:pointer;transition:all .35s cubic-bezier(.16,1,.3,1);
+}
+.btn-primary:hover{background:var(--accent-l);transform:translateX(-2px)}
+.btn-primary svg{transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.btn-primary:hover svg{transform:translateX(4px)}
+
+.btn-outline{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--sans);font-size:.82rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-mid);background:transparent;padding:16px 36px;border-radius:100px;
+  border:1px solid rgba(240,237,232,.12);cursor:pointer;transition:all .35s cubic-bezier(.16,1,.3,1);
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent-l)}
+
+.arr{width:14px;height:14px;flex-shrink:0}
+
+/* âââââââââââââââââââââââââââââââ
+   1. HERO
+âââââââââââââââââââââââââââââââ */
+.hero{height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:0 10vw}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 45% 50% at 30% 55%,rgba(212,85,43,.04),transparent)}
+.hero-glow{
+  position:absolute;width:500px;height:500px;
+  background:radial-gradient(circle,var(--accent-glow),transparent 70%);
+  border-radius:50%;top:45%;left:25%;opacity:0;filter:blur(80px);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(240,237,232,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(240,237,232,.015) 1px,transparent 1px);
+  background-size:80px 80px;opacity:0;
+}
+.hero-content{position:relative;z-index:2;width:100%}
+.hero-eyebrow{
+  font-size:.62rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:48px;opacity:0;
+}
+.hero-title{font-family:var(--serif);line-height:1}
+.hero-word;display:block;transform:translateY(115%);font-size:clamp(4rem,11vw,12rem);letter-spacing:-.04em}
+.hero-word .ac{color:var(--accent)}
+.hero-word .it{font-style:italic;color:var(--accent)}
+.hero-word.sm{
+  font-size:clamp(1.1rem,2.2vw,1.8rem);font-family:var(--sans);font-weight:200;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-top:8px;
+}
+.hero-aside{position:absolute;right:10vw;bottom:22vh;text-align:right;opacity:0;transform:translateY(16px)}
+.hero-aside-line{font-size:.72rem;font-weight:300;color:var(--text-dim);line-height:2;letter-spacing:.04em}
+.hero-scroll{position:absolute;bottom:40px;left:10vw;display:flex;align-items:center;gap:12px;opacity:0}
+.hero-scroll-line{width:40px;height:1px;background:var(--accent);animation:scrollPulse 2.5s ease infinite}
+.hero-scroll-text{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+@keyframes scrollPulse{
+  0%,100%{opacity:.3;transform:scaleX(.5);transform-origin:left}
+  50%{opacity:1;transform:scaleX(1)}
+}
+
+/* âââââââââââââââââââââââââââââââ
+   2. STATEMENT
+âââââââââââââââââââââââââââââââ */
+.statement;min-height:85vh;display:flex;align-items:center;justify-content:center;padding:12vh 10vw;position:relative}
+.statement-text{
+  font-family:var(--serif);font-size:clamp(2rem,4.5vw,3.8rem);
+  line-height:1.3;letter-spacing:-.02em;max-width:800px;
+}
+.statement-text .word{display:inline-block;opacity:.06;margin-right:.2em;transition:opacity .15s}
+.statement-text .word.active{opacity:1}
+.statement-text .hl{color:var(--accent)}
+.statement-num{
+  position:absolute;right:8vw;top:50%;transform:translateY(-50%);
+  font-family:var(--serif);font-size:clamp(10rem,22vw,18rem);
+  color:rgba(212,85,43,.025);pointer-events:none;
+}
+
+/* âââââââââââââââââââââââââââââââ
+   3. SERVICES
+âââââââââââââââââââââââââââââââ */
+.services{padding:160px 10vw;position:relative}
+.services-head{
+  font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.5rem);
+  line-height:1.08;margin-top:40px;margin-bottom:80px;max-width:520px;letter-spacing:-.02em;
+}
+.services-head em{color:var(--accent);font-style:italic}
+.svc-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:36px 0;border-bottom:1px solid var(--border);
+  opacity:0;transform:translateY(28px);position:relative;overflow:hidden;
+}
+.svc-row::before{
+  content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.svc-row:hover::before{transform:scaleX(1)}
+.svc-left{display:flex;align-items:center;gap:20px}
+.svc-icon{
+  width:44px;height:44px;border:1px solid rgba(240,237,232,.08);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:border-color .4s,background .4s;
+}
+.svc-icon svg{width:20px;height:20px;color:var(--accent)}
+.svc-row:hover .svc-icon{border-color:var(--border-h);background:rgba(212,85,43,.05)}
+.svc-name{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2.2rem);letter-spacing:-.01em;transition:color .4s}
+.svc-row:hover .svc-name{color:var(--accent-l)}
+.svc-desc{
+  max-width:260px;font-size:.8rem;font-weight:300;color:var(--text-dim);line-height:1.55;
+  opacity:0;transform:translateX(8px);transition:opacity .4s,transform .4s;
+}
+.svc-row:hover .svc-desc{opacity:1;transform:translateX(0)}
+
+/* âââââââââââââââââââââââââââââââ
+   4. PORTFOLIO â CSS SCROLL-SNAP
+âââââââââââââââââââââââââââââââ */
+.portfolio{padding:160px 0 0;position:relative}
+.portfolio-top{paeÔing:0 10vw;margin-bottom:56px;opacity:0;transform:translateY(24px)}
+.portfolio-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);letter-spacing:-.02em;margin-top:32px}
+.portfolio-title em{color:var(--accent);font-style:italic}
+.portfolio-sub{font-size:.85rem;font-weight:300;color:var(--text-dim);margin-top:10px}
+
+.portfolio-track{
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  padding:0 10vw 60px;
+  cursor:grab;
+}
+.portfolio-track:active{cursor:grabbing}
+.portfolio-track::-webkit-scrollbar{display:none}
+
+.portfolio-card{
+  scroll-snap-align:start;
+  flex-shrink:0;
+  width:clamp(260px,22vw,320px);
+  border-radius:6px;overflow:hidden;
+  background:var(--bg2);border:1px solid var(--border);
+  transition:border-color .5s;
+}
+.portfolio-card:hover{border-color:var(--border-h)}
+
+/* Image container â swap url() here when Canva mockups are ready */
+.portfolio-img{
+  aspect-rati:3/4;
+  position:relative;overflow:hidden;
+  background-color:var(--bg3);
+  background-size:cover;background-position:center;
+}
+/* Inner div handles tae zoom-on-hover without affecting tae overlay */
+.portfolio-img-inner{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform .8s cubic-bezier(.16,1,.3,1);
+}
+.portfolio-card:hover .portfolio-img-inner{transform:scale(1.04)}
+
+/* Fallback gradient â shows when no image url is set */
+.portfolio-img-inner.ph-1{background:linear-gradient(160deg,#2a1f1a 0%,#0d0a08 100%)}
+.portfolio-img-inner.ph-2{background:linear-gradient(145deg,#1a2530 0%,#080c10 100%)}
+.portfolio-img-inner.ph-3{background:linear-gradient(170deg,#2a2218 0%,#0a0806 100%)}
+.portfolio-img-inner.ph-4{background:linear-gradient(155deg,#222030 0%,#0a080e 100%)}
+.portfolio-img-inner.ph-5{background:linear-gradient(140deg,#1f2a1a 0%,#080e06 100%)}
+.portfolio-img-inner.ph-6{background:linear-gradient(165deg,#2a1a1a 0%,#0e0606 100%)}
+
+.portfolio-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(17,17,17,.65) 0%,transparent 50%)}
+.portfolio-tag{
+  position:absolute;top:14px;left:14px;
+  font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);background:rgba(0,0,0,.4);
+  backdrop-filter:blur(8px);padding:4px 11px;border-radius:100px;
+}
+.portfolio-info{padding:18px}
+.portfolio-info h4{font-family:var(--serif);font-size:.95rem;margin-bottom:3px}
+.portfolio-info p{font-size:.72rem;font-weight:300;color:var(--text-dim)}
+
+.portfolio-hint{
+  padding:0 10vw 40px;
+  display:flex;align-items:center;gap:8px;
+  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);
+}
+.portfolio-hint svg{width:14px;height:14px;color:var(--text-dim)}
+@media(min-width:900px){.portfolio-hint{display:none}}
+
+/* âââââââââââââââââââââââââââââââ
+   5. PROCESS â EDITORIAL SPLIT
+âââââââââââââââââââââââââââââââ */
+.process{padding:180px 10vw;display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center}
+.process-frac{font-family:var(--serif)}
+.process-line{display:block;overflow:hidden}
+.process-word{display:block;transform:translateY(115%);font-size:clamp(2.2rem,4.5vw,4.2rem);line-height:1.08;letter-spacing:-.03em}
+.process-word .ac{color:var(--accent)}
+.process-word.ind{padding-left:6vw}
+.process-body{margin-top:36px;font-size:.9rem;font-weight:300;color:var(--text-mid);line-height:1.8;max-width:400px;opacity:0;transform:translateX(18px)}
+.process-steps{margin-top:40px;display:flex;flex-direction:column;gap:20px;opacity:0;transform:translateY(18px)}
+.process-step{display:flex;align-items:flex-start;gap:14px}
+.process-step-num{font-family:var(--serif);font-size:1.8rem;color:rgba(212,85,43,.2);line-height:1;flex-shrink:0;width:36px}
+.process-step-text{font-size:.85rem;font-weight:300;color:var(--text-soft);line-height:1.6}
+.process-step-text strong{font-weight:600;color:var(--text)}
+
+/* Process image â swap PROCESS_IMAGE_URL when ready */
+.process-img{
+  aspect-ratio:3/4;border-radius:6px;overflow:hidden;
+  opacity:0;transform:translateX(36px);position:relative;
+  background:var(--bg2);
+  background-image:url('PROCESS_IMAGE_URL');
+  background-size:cover;background-position:center;
+}
+.process-img-border{position:absolute;inset:0;border:1px solid var(--border);border-radius:6px}
+.process-img-tag{position:absolute;bottom:20px;left:20px;font-size:.58rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+.process-img-ct{position:absolute;top:20px;right:20px;font-family:var(--serif);font-size:2.5rem;color:rgba(212,85,43,.06)}
+
+/* âââââââââââââââââââââââââââââââ
+   7. ABOUT TALAN
+ââââââââââââââââââââââââââââââ */
+.audience{padding:160px 10vw;background:var(--bg2)}
+.audience-heading{
+  font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,4rem);
+  line-height:1.05;letter-spacing:-.03em;margin-top:40px;margin-bottom:72px;max-width:640px;
+}
+.audience-heading em{color:var(--accent);font-style:italic}
+.audience-list{display:flex;flex-direction:column;gap:0}
+.audience-item{
+  display:flex;align-items:center;gap:24px;
+  padding:28px 0;border-bottom:1px solid var(--border);
+  opacity:0;transform:translateX(-30px);
+}
+.audience-icon{
+  flex-shrink:0;width:48px;height:48px;
+  border:1px solid rgba(212,85,43,.2);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.audience-icon svg{width:22px;height:22px;color:var(--accent)}
+.audience-name{font-family:var(--serif);font-size:clamp(1.3rem,2.5vw,2rem);letter-spacing:-.01em}
+
+/* âââââââââââââââââââââââââââââââ
+   7. ABOUT TALAN
+âââââââââââââââââââââââââââââââ */
+.about{padding:180px 10vw;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+
+.about-photo{
+  aspect-rati:3/4;border-radius:6px;overflow:hidden;
+  position:relative;background:var(--bg2);
+}
+.about-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.about-photo-fallback{
+  position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;flex-direction:column;gap:16px;
+}
+.about-photo-initials{
+  width:90px;height:90px;border-radius:50%;
+  background:rgba(212,85,43,.1);border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:2rem;color:var(--accent);
+}
+.about-photo-caption{font-size:.68rem;color:var(--text-dim);letter-spacing:.08em}
+.about-name-card{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,rgba(17,17,17,.92) 0%,transparent 100%);
+  padding:32px 24px 24px;
+}
+.about-name-card-name{font-family:var(--serif);font-size:1.2rem;color:var(--text)}
+.about-name-card-title{font-size:.68rem;color:var(--text-mid);margin-top:5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px}
+.about-stat{background:var(--bg2);padding:24px 20px;text-align:center;opacity:0;transform:translateY(16px)}
+.about-stat-num{font-family:var(--serif);font-size:1.8rem;color:var(--accent-l);line-height:1}
+.about-stat-label{font-size:.66rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-top:6px}
+
+.about-content{opacity:0;transform:translateX(24px)}
+.about-heading{
+  font-family:var(--serif);font-size:clamp(2rem,3.8vw,3.2rem);
+  line-height:1.1;letter-spacing:-.02em;margin-top:40px;margin-bottom:24px;
+}
+.about-heading em{color:var(--accent);font-style:italic}
+.about-text{font-size:.92rem;font-weight:300;color:var(--text-mid);line-height:1.75;margin-bottom:16px;max-width:460px}
+.about-quote{
+  margin:28px 0;padding:18px 22px;
+  border-left:3px solid var(--accent);background:var(--bg2);border-radius:0 6px 6px 0;
+}
+.about-quote p{font-family:var(--serif);font-size:1.05rem;color:var(--text);font-style:italic;line-height:1.55}
+.about-quote cite{display:block;font-size:.75rem;color:var(--text-mid);margin-top:10px;font-weight:600;letter-spacing:.04em;font-style:normal}
+.about-checklist{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.about-check{display:flex;align-items:center;gap:12px;font-size:.85rem;font-weight:300;color:var(--text-mid)}
+.about-check svg{width:14px;height:14px;color:var(--accent);flex-shrink:0}
+
+/* âââââââââââââââââââââââââââââââ
+   8. PRICING
+âââââââââââââââââââââââââââââââ */
+.pricing{padding:160px 10vw;background:var(--bg2)}
+.pricing-head{
+  font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.5rem);
+  line-height:1.08;margin-top:40px;margin-bottom:16px;letter-spacing:-.02em;
+}
+.pricing-head em{color:var(--accent);font-style:italic}
+.pricing-sub{font-size:.9rem;font-weight:300;color:var(--text-mid);max-width:460px;line-height:1.7;margin-bottom:72px}
+.pricing-cards{display:grid;grid-template-columns:1fr 1fr;gap:2px;max-width:860px}
+.pricing-card{background:var(--bg);padding:52px 40px;opacity:0;transform:translateX(24px);position:relative}
+.pricing-card.featured{border-top:2px solid var(--accent)}
+.pricing-badge{
+  display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);background:rgba(212,85,43,.08);padding:5px 13px;border-radius:100px;margin-bottom:24px;
+}
+.pricing-label{font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.pricing-amount{font-family:var(--serif);font-size:clamp(2.8rem,4.5vw,4rem);line-height:1;letter-spacing:-.03em}
+.pricing-period{font-family:var(--sans);font-size:.9rem;font-weight:300;color:var(--text-dim);margin-left:2px}
+.pricing-retainer{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:12px;font-size:.8rem;font-weight:300;color:var(--text-mid);
+}
+.pricing-retainer strong{color:var(--text);font-weight:600}
+.pricing-list{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+.pricing-item{display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:300;color:var(--text-mid)}
+.pricing-item svg{flex-shrink:0;color:var(--accent);width:14px;height:14px}
+.pricing-note{margin-top:32px;font-size:.74rem;color:var(--text-dim);font-weight:300;line-height:1.6;padding-top:20px;border-top:1px solid var(--border)}
+
+/* âââââââââââââââââââââââââââââââ
+   9. METRICS
+âââââââââââââââââââââââââââââââ */
+.metrics{padding:100px 10vw}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.metric-card{background:var(--bg2);padding:48px 28px;text-align:center;opacity:0;transform:scale(.93);position:relative;overflow:hidden}
+.metric-card::after{content:'';position:absolute;inset:0;border:1px solid transparent;transition:border-color .5s}
+.metric-card:hover::after{border-color:var(--border-h)}
+.metric-num{font-family:var(--serif);font-size:clamp(2.2rem,3.5vw,3.2rem);letter-spacing:-.03em;color:var(--accent-l);line-height:1}
+.metric-label{margin-top:10px;font-size:.68rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+
+/* âââââââââââââââââââââââââââââââ
+   10. CTA
+âââââââââââââââââââââââââââââââ */
+.cta-section{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cta-glow{
+  position:absolute;width:700px;height:700px;
+  background:radial-gradient(circle,rgba(212,85,43,.06) 0%,transparent 60%);
+  border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);filter:blur(100px);
+}
+.cta-heading{font-family:var(--serif);text-align:center;position:relative;z-index:2}
+.cta-word{display:block;transform:translateX(115%);font-size:clamp(3.5rem,9vw,10rem);line-height:.95;letter-spacing:-.04em}
+.cta-word .it{font-style:italic;color:var(--accent)}
+.cta-sub{
+  margin-top:28px;font-size:.92rem;font-weight:300;color:var(--text-mid);
+  text-align:center;max-width:420px;line-height:1.7;
+  position:relative;z-index:2;opacity:0;transform:translateY(16px);
+}
+.cta-buttons{margin-top:44px;display:flex;gap:14px;position:relative;z-index:2;opacity:0;transform:translateY(20px)}
+
+/* ââââââââââââââââââââââââââââââ
+   11. CONTACT
+âââââââââââââââââââââââââââââââ */
+.contact{padding:120px 10vw;background:var(--bg2);display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-heading{
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);
+  line-height:1.08;margin-top:40px;margin-bottom:20px;letter-spacing:-.02em;
+}
+.contact-heading em{color:var(--accent);font-style:italic}
+.contact-text{font-size:.9rem;font-weight:300;color:var(--text-mid);line-height:1.7;margin-bottom:36px;max-width:380px}
+.contact-info{display:flex;flex-direction:column;gap:18px}
+.contact-info-item{display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--text-mid);font-weight:300}
+.contact-info-item svg{color:var(--accent);width:16px;height:16px;flex-shrink:0}
+
+.contact-form{display:flex;flex-direction:column}
+.form-field{position:relative;border-bottom:1px solid var(--border)}
+.form-field input,.form-field textarea{
+  width:100%;background:transparent;border:none;outline:none;
+  font-family:var(--sans);font-size:.92rem;font-weight:300;
+  color:var(--text);padding:22px 0;
+}
+.form-field textarea{resize:none;height:110px}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--text-dim)}
+.form-field::after{
+  content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.form-field:focus-within::after{transform:scaleX(1)}
+.form-submit{margin-top:32px;align-self:flex-start}
+
+#form-success{
+  display:none;margin-top:20px;padding:20px 24px;
+  background:rgba(212,85,43,.06);border:1px solid rgba(212,85,43,.2);border-radius:6px;
+  font-size:.88rem;color:var(--text-mid);line-height:1.6;
+}
+#form-success strong{color:var(--accent)}
+
+/* âââââââââââââââââââââââââââââââ
+   FOOTER
+âââââââââââââââââââââââââââââââ */
+footer{
+  padding:40px 10vw;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--text-mid)}
+.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);transition:color .3s}
+.footer-links a:hover{color:var(--accent-l)}
+.footer-copy{font-size:.66rem;color:var(--text-dim)}
+
+/* âââââââââââââââââââââââââââââââ
+   RESPONSIVE â TABLET / MOBILE
+âââââââââââââââââââââââââââââââ */
+@media(max-width:900px){
+  .nav-inner{padding:14px 20px}
+  .nav-links .nav-link{display:none}
+
+  .hero{padding:0 6vw}
+  .hero-aside{display:none}
+  .hero-scroll{left:6vw}
+
+  .statement{padding:12vh 6vw}
+  .statement-num{display:none}
+
+  .services{padding:120px 6vw}
+  .svc-desc{display:none}
+
+  .portfolio-top{padding:0 6vw}
+  .portfolio-track{padding:0 6vw 48px}
+  .portfolio-hint{padding:0 6vw 32px}
+
+  .process{grid-template-columns:1fr;gap:48px;padding:120px 6vw}
+  .process-word.ind{padding-left:0}
+
+  .audience{padding:120px 6vw}
+
+  .about{grid-template-columns:1fr;gap:48px;padding:120px 6vw}
+
+  .pricing{padding:120px 6vw}
+  .pricing-cards{grid-template-columns:1fr}
+
+  .metrics{padding:80px 6vw}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+
+  .contact{grid-template-columns:1fr;gap:48px;padding:100px 6vw}
+
+  footer{padding:28px 6vw;flex-direction:column;gap:16px;text-align:center}
+  .footer-links{flex-wrap:wrap;justify-content:center}
+}
+
+@media(max-width:600px){
+  .metrics-grid{grid-template-columns:1fr}
+  .cta-buttons{flex-direction:column;align-items:center}
+  .portfolio-card{width:clamp(240px,80vw,300px)}
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="progress-bar"></div>
+
+<!-- âââ NAV âââ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">Solvra<span>.</span></a>
+    <div class="nav-links">
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#work" class="nav-link">Work</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#contact" class="nav-cta">Get Your Free Demo</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ââââ 1. HERO ââââ -->
+<section class="hero" id="top">
+  <div class="hero-[g"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Web Design &amp; Marketing â Spokane, WA</div>
+    <h1 class="hero-title">
+      <span class="ln"><span class="hero-word">We Build</span></span>
+      <span class="ln"><span class="hero-word">What <span class="it">Grows</span></span></span>
+      <span class="ln"><span class="hero-word sm">You.</span></span>
+    </h1>
+  </div>
+  <div class="hero-aside">
+    <div class="hero-aside-line">Websites built with</div>
+    <div class="hero-aside-line">precision, not templates.</div>
+    <div class="hero-aside-line" style="color:var(--accent);margin-top:6px">Spokane, WA</div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-text">Scroll</span>
+  </div>
+</section>
+
+
+<!-- ââââ 2. STATEMENT ââââ -->
+<section class="statement">
+  <div class="statement-num">01</div>
+  <p class="statement-text">
+    <span class="word">Your</span>
+    <span class="word">customers</span>
+    <span class="word">are</span>
+    <span class="word">searching</span>
+    <span class="word">for</span>
+    <span class="word">you</span>
+    <span class="word hl">right</span>
+    <span class="word hl">now.</span>
+    <span class="word">We</span>
+    <span class="word">make</span>
+    <span class="word">sure</span>
+    <span class="word">they</span>
+    <span class="word hl">find</span>
+    <span class="word">you</span>
+    <span class="word">â</span>
+    <span class="word">and</span>
+    <span class="word hl">choose</span>
+    <span class="word">you.</span>
+  </p>
+</section>
+
+
+<!-- ââââ 3. SERVICES ââââ -->
+<section class="services" id="services">
+  <div class="section-label">What We Do</div>
+  <h2 class="services-head">One crew.<br>One price.<br><em>Every job.</em></h2>
+
+  <div class="svc-row">
+    <div class="svc-left">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="svc-name">High-Performance Websites<.span>
+    </div>
+    <span class="svc-desc">Custom-built, conversion-driven, and fast. No templates, no shortcuts â every site is made for your business specifically.</span>
+  </div>
+
+  <div class="svc-row">
+    <div class="svc-left">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><.svg>
+      </div>
+      <span class="svc-name">Search Visibility</span>
+    </div>
+    <span class="svc-desc">Local SEO that puts your name at the top when customers are searching your area and ready to spend money.</span>
+  </div>
+
+  <div class="svc-row">
+    <div class="svc-left">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="svc-name">Review Integration</span>
+    </div>
+    <span class="svc-desc">Your best Google and Facebook reviews, front and center â because trust is earned before they ever call.</span>
+  </div>
+
+  <div class="svc-row">
+    <div class="svc-left">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <span class="svc-name">Lead Generation</span>
+    </div>
+    <span class="svc-desc">Forms, calls-to-action, and tracking engineered to turn website visitors into real phone calls and booked jobs.</span>
+  </div>
+
+  <div class="svc-row">
+    <div class="svc-left">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <span class="svc-name">Ongoing Growth Support</span>
+    </div>
+    <span class="svc-desc">Monthly updates, performance reports, and same-day support. We don't hand off a site and go dark â we stay in your corner.</span>
+  </div>
+</section>
+
+
+<!-- ââââ 4. PORTFOLIO ââââ -->
+<section class="portfolio" id="work">
+  <div class="portfolio-top">
+    <div class="section-label">Selected Work</div>
+    <h2 class="portfolio-title">Projects built for<br><em>real results.</em></h2>
+    <p class="portfolio-sub">Qeal photos replace these placeholders as each project goes live.</p>
+  </div>
+
+  <div class="portfolio-track" id="portfolioTrack">
+
+    <div class="portfolio-card">
+      <!-- To swap in a real image: add style="background-image:url('YOUR_URL')" to .portfolio-img, and remove the ph-1 class from .portfolio-img-inner -->
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-1"></div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Painting &amp; Remodel</div>
+      </div>
+      <div class="portfolio-info"><h4>Covington Painting</h4><p>Full site build &middot; Spokane Valley</p></div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-2"></div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Restaurant</div>
+      </div>
+      <div class="portfolio-info"><h4>Future Client</h4><p>Menu-driven landing page &middot; Coming soon</p></div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-3"><.div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Interior Services<.div>
+      </div>
+      <div class="portfolio-info"><h4>Cabinet Refinishing</h4><p>Before/after showcase &middot; Liberty Lake</p></div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-4"><.div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Professional Services</div>
+      </div>
+      <div class="portfolio-info"><h4>Med-Spa &amp; Wellness</h4><p>Premium landing page &middot; Concept<.p></div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-5"></div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Home Services<.div>
+      </div>
+      <div class="portfolio-info"><h4>General Contractor</h4><p>Project gallery site &middot; South Hill</p></div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-img">
+        <div class="portfolio-img-inner ph-6"></div>
+        <div class="portfolio-overlay"></div>
+        <div class="portfolio-tag">Agency</div>
+      </div>
+      <div class="portfolio-info"><h4>Solvra Marketing</h4><p>Agency identity &middot; Spokane, WA</p></div>
+    </div>
+
+  </div>
+
+  <div class="portfolio-hint">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h12M8 4l4 4-4 4"/></svg>
+    <span>Swipe to explore</span>
+  </div>
+</section>
+
+
+<!-- ââââ 5. PROCESS ââââ -->
+<section class="process" id="process">
+  <div>
+    <div class="section-label">How It Works</div>
+    <div class="process-frac">
+      <span class="process-line"><span class="process-word">We build</span><.span>
+      <span class="process-line"><span class="process-word ind">the <span class="ac">demo</span></span><.span>
+      <span class="process-line"><span class="process-word">first.</span><.span>
+    </div>
+    <p class="process-body">Before we talk pricing, you see exactly what your site will look like. Custom. Yours. Not a template with your logo dropped in. If it doesn't feel right, no invoice â no hard feelings.</p>
+    <div class="process-steps">
+      <div class="process-step">
+        <span class="process-step-num">01</span>
+        <div class="process-step-text"><strong>We Build Your Demo<.strong> â a fully custom mockup of your site, free, before you commit to anything.</div>
+      </div>
+      <div class="process-step">
+        <span class="process-step-num">02<.span>
+        <div class="process-step-text"><strong>You Review &amp; Refine<.strong> â your feedback shapes everything. We adjust until it genuinely feels like yours.<.div>
+      </div>
+      <div class="process-step">
+        <span class="process-step-num">03</span>
+        <div class="process-step-text"><strong>Launch &amp; Grow</strong> â we push it live with hosting, monitoring, updates, and monthly lead reports included.</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <!-- Swap PROCESS_IMAGE_URL with a real photo when ready -->
+    <div class="process-img" style="background-image:url('PROCESS_IMAGE_URL')">
+      <div class="process-img-border"></div>
+      <div class="process-img-tag">Demo First â Always</div>
+      <div class="process-img-ct">01</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ââââ 6. AUDIENCE ââââ -->
+<section class="audience">
+  <div class="section-label">Who This Is For</div>
+  <h2 class="audience-heading">Built for local businesses that <em>do the work.<.em></h2>
+  <div class="audience-list">
+
+    <div class="audience-item">
+      <div class="audience-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/><.svg>
+      </div>
+      <span class="audience-name">Contractors &amp; Home Services</span>
+    </div>
+
+    <div class="audience-item">
+      <div class="audience-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      </div>
+      <span class="audience-name">Restaurants &amp; Hospitality<.span>
+    </div>
+
+    <div class="audience-item">
+      <div class="audience-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="audience-name">Professional Services &amp; Med-Spas</span>
+    </div>
+
+    <div class="audience-item">
+      <div class="audience-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <.div>
+      <span class="audience-name">Any Local Business Ready to Grow</span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ââââ 7. ABOUT TALAN ââââ -->
+<section class="about" id="about">
+
+  <div>
+    <!-- Photo card -->
+    <!-- Replace YOUR_PHOTO_URL_HERE with your GitHub raw image URL or local file path -->
+    <div class="about-photo">
+      <img
+        src="YOUR_PHOTO_URL_HERE"
+        alt="Talan Mason â Founder, Solvra Marketing"
+        onerror="this.style.display='nong';document.getElementById('aboutFallback').style.display='flex';"
+      >
+      <div class="about-photo-fallback" id="aboutFallback" style="display:none">
+        <div class="about-photo-initials">TM</div>
+        <span class="about-photo-caption">Photo coming soon</span>
+      </div>
+      <div class="about-name-card">
+        <div class="about-name-card-name">Talan Mason</div>
+        <div class="about-name-card-title">Founder &middot; Solvra Marketing &middot; Spokane, WA<.div>
+      </div>
+    <.div>
+    <!-- Stats under photo -->
+    <div class="about-stats">
+      <div class="about-stat">
+        <div class="about-stat-num">24hr</div>
+        <div class="about-stat-label">Demo Turnaround</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-num">7 days</div>
+        <div class="about-stat-label">Approval to Live</div>
+      <.div>
+      <div class="about-stat">
+        <div class="about-stat-num">$0</div>
+        <div class="about-stat-label">Due Until You Love It</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-num">100%</div>
+        <div class="about-stat-label">Spokane-Based<.div>
+      </div>
+    <.div>
+  <.div>
+
+  <!-- Story side -->
+  <div class="about-content">
+    <div class="section-label">The Person Behind Solvra</div>
+    <h2 class="about-heading">I started this because I was tired of watching <em>good businesses lose.</em></h2>
+    <p class="about-text">I'm Talan. I kept seeing the same thing: great local businesses â contractors, restaurants, service providers â losing jobs to competitors with fancier websites. Not because the other guy was better. Just because they looked better online.<.p>
+    <p class="about-text">That felt wrong. So I built Solvra to fix it. No big agency overhead, no cookie-cutter templates, no disappearing after the invoice. Just me â Spokane local, accountable, building sites that actually make your phone ring.</p>
+    <blockquote class="about-quote">
+      <p>"I build you a real demo before you pay a cent. If you don't love it, there's no invoice. That's the deal â and I mean it."</p>
+      <cite>â Talan Mason, Founder<.cite>
+    <.blockquote>
+    <div class="about-checklist">
+      <div class="about-check">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8l4 4 8-7"/></svg>
+        Spokane local â call, text, or meet for coffee
+      </div>
+      <div class="about-check">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8l4 4 8-7"/></svg>
+        Demo before you pay â every single time
+      </div>
+      <div class="about-check">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8l4 4 8-7"/><.svg>
+        Monthly management â you never think about your site again
+      </div>
+      <div class="about-check">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8l4 4 8-7"/><.svg>
+        No contracts, no hidden fees, no surprises
+      </div>
+      <div class="about-check">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8l4 4 8-7"/><.svg>
+        I only take clients whose businesses I believe in
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ââââ 8. PRICING ââââ -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="pricing-head">Transparent.<br><em>No surprises.<.em></h2>
+  <p class="pricing-sub">One setup fee. One monthly rate. No contracts, no hidden costs. Cancel anytime. You stay because it works.</p>
+
+  <div class="pricing-cards">
+
+    <!-- LAUNCH PARTNER -->
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Launch Partner â Limited Spots<.div>
+      <div class="pricing-label">Setup Fee</div>
+      <div class="pricing-amount">$299</div>
+      <div class="pricing-retainer">Then <strong>$99/mo<.strong> â hosting, edits &amp; support<.div>
+      <div class="pricing-list">
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Custom-built website
+        <.div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Mobile-optimized &amp; fast loading
+        <.div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Review integration setup
+        </div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/><.svg>
+          SEO foundation included
+        </div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/><.svg>
+          Hosting, SSL &amp; monthly updates
+        <.div>
+      </div>
+      <p class="pricing-note">First 3 clients only. Includes a fully personalized custom demo before you commit to anything.<.p>
+    <.div>
+
+    <!-- STANDARD -->
+    <div class="pricing-card">
+      <div style="height:46px"></div>
+      <div class="pricing-label">Setup Fee<.div>
+      <div class="pricing-amount">$500<.div>
+      <div class="pricing-retainer">Then <strong>$149/mo<.strong> â hosting, edits &amp; support<.div>
+      <div class="pricing-list">
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Everything in Launch Partner
+        </div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Additional page builds
+        </div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/><.svg>
+          Advanced lead tracking
+        <.div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Priority same-day support
+        </div>
+        <div class="pricing-item">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>
+          Monthly performance report
+        </div>
+      <.div>
+      <p class="pricing-note">Standard rate once founding spots are filled. No contract â cancel anytime.<.p>
+    <.div>
+
+  </div>
+</section>
+
+
+<!-- ââââ 9. METRICS ââââ -->
+<section class="metrics">
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-num">&lt;3s</div><div class="metric-label">Target Load Time</div></div>
+    <div class="metric-card"><div class="metric-num">72%</div><div class="metric-label">Check Google First<.div><.div>
+    <div class="metric-card"><div class="metric-num">$0</div><div class="metric-label">Contracts or Lock-ins</div></div>
+    <div class="metric-card"><div class="metric-num">24h</div><div class="metric-label">Support Response</div></div>
+  </div>
+</section>
+
+
+<!-- ââââ 10. CTA ââââ -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="cta-heading">
+    <span class="ln"><span class="cta-word">Let's</span></span>
+    <span class="ln"><span class="cta-word"><span class="it">Build.</span><.span></span>
+  </div>
+  <p class="cta-sub">Your custom demo is free. If it doesn't blow you away, no invoice, no hard feelings. That's the whole deal.</p>
+  <div class="cta-buttons">
+    <a href="#contact" class="btn-primary">
+      Get Your Free Demo
+      <svg class="arr" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="#pricing" class="btn-outline">See Pricing<.a>
+  </div>
+</section>
+
+
+<!-- ââââ 11. CONTACT ââââ -->
+<section class="contact" id="contact">
+  <div>
+    <div class="section-label">Get In Touch</div>
+    <h2 class="contact-heading">Ready to<br><em>grow?</em></h2>
+    <p class="contact-text">Tell us about your business. We'll get back within 24 hours â and if we're the right fit, your custom demo is on us.<.p>
+    <div class="contact-info">
+      <div class="contact-info-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-= 13-9 13s-9-6-=-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Spokane, WA
+      </div>
+      <div class="contact-info-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        talan@solvramarketing.com
+      </div>
+    </div>
+  </div>
+
+  <form id="contact-form" action="https://formspree.io/f/meepekng" method="POST">
+    <div class="form-field"><input type="text" name="name" placeholder="Your Name" required></div>
+    <div class="form-field"><input type="email" name="email" placeholder="Email Address" required></div>
+    <div class="form-field"><input type="text" name="business" placeholder="Business Name"></div>
+    <div class="form-field"><input type="text" name="industry" placeholder="Industry / What You Do"></div>
+    <div class="form-field"><input type="url" name="website" placeholder="Current Website (if any)"></div>
+    <div class="form-field"><textarea name="message" placeholder="Tell us about your business and what you're looking for..."></textarea></div>
+    <div class="form-submit">
+      <button type="submit" class="btn-primary">
+        Send It
+        <svg class="arr" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div id="form-success">
+      <strong>Message received.</strong> We'll be in touch within 24 hours. If you're a good fit, your custom demo is coming.
+    </div>
+  </form>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Solvra<span>.</span></div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="footer-copy">&copy; 2026 Solvra Marketing â Spokane, WA</div>
+</footer>
+
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ââ PROGRESS BAR ââ */
+gsap.to('.progress-bar', {
+  width: '100%', ease: 'none',
+  scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3 }
+});
+
+/* ââ 1. HERO ENTRANCE ââ */
+const heroTl = gsap.timeline({ delay: 0.35 });
+heroTl
+  .to('.hero-grid',    { opacity: 1, duration: 1.5, ease: 'power2.out' }, 0)
+  .to('.hero-glow',    { opacity: 1, duration: 2,   ease: 'power2.out' }, 0.1)
+  .to('.hero-eyebrow', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.3)
+  .to('.hero-word',    { y: 0, duration: 1.3, ease: 'power4.out', stagger: 0.14 }, 0.5)
+  .to('.hero-aside',   { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1.4)
+  .to('.hero-scroll',  { opacity: 1, duration: 0.6, ease: 'power2.out' }, 1.7);
+
+/* Subtle hero parallax on scroll â not scroll-hijacking */
+gsap.to('.hero-content', {
+  y: -80, opacity: 0,
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+});
+gsap.to('.hero-glow', {
+  scale: 2, opacity: 0,
+  scrollTrigger: { trigger: '.hero', start: 'center center', end: 'bottom top', scrub: 1 }
+});
+gsap.to('.hero-scroll', {
+  opacity: 0,
+  scrollTrigger: { trigger: '.hero', start: '5% top', end: '18% top', scrub: true }
+});
+
+/* ââ 2. STATEMENT WORD REVEAL ââ */
+const stmtWords = document.querySelectorAll('.statement-text .word');
+ScrollTrigger.create({
+  trigger: '.statement',
+  start: 'top 75%',
+  end: 'center center',
+  scrub: true,
+  onUpdate: (s) => {
+    stmtWords.forEach((w, i) => {
+      w.classList.toggle('active', s.progress > i / stmtWords.length);
+    });
+  }
+});
+
+/* ââ SECTION LABELS ââ */
+document.querySelectorAll('.section-label').forEach(el => {
+  gsap.to(el, {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 3. SERVICES ROWS ââ */
+gsap.utils.toArray('.svc-row').forEach((r, i) => {
+  gsap.to(r, {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.06,
+    scrollTrigger: { trigger: r, start: 'top 90%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 4. PORTFOLIO â fade section header in; scroll handled natively via CSS scroll-snap ââ */
+gsap.to('.portfolio-top', {
+  opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.portfolio-top', start: 'top 85%', toggleActions: 'play none none reverse' }
+});
+
+/* Mouse-drag scroll on desktop for portfolio track */
+(function () {
+  const track = document.getElementById('portfolioTrack');
+  if (!track) return;
+  let isDown = false, startX, scrollLeft;
+  track.addEventListener('mousedown', e => {
+    isDown = true;
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+  });
+  track.addEventListener('mouseleave', () => { isDown = false; });
+  track.addEventListener('mouseup',    () => { isDown = false; });
+  track.addEventListener('mousemove',  e => {
+    if (Version '.addEventListens'))"B0.3%+> 'kobB ?kob(Hrev', {
+    if (Tell '.addEventListens'))"B0.5%+> ?kob(Hrev', {
+    if (Tell '.addEventListens'))"B0.6%+> ?kob(Hrev', {
+    if (Tell '.addEventListens'))"B0.7%+> ?kob(Hrev', {
+    if (Tell '.addEventListens'))"B0.8%+> ?kob(Hrev', {
+    if (Tell '.addEventListens'))"B1"; }););
+  return.addEventListener('mousemove',  e => {
+      stmtWords.body: false{
+       if ("+Color0 width key* complentation: 0), stmt: 0, duration: 1.5, stagger: 0.14, ease: 'plugin selledret"{ opacity: 10, stagger: 0.14, toggleActions: 'play none none reverse' } {  y: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.process-img', start: 'top 80%', toggleActions: 'play none none reverse' }
+});
+
+/* ââ 6. AUDIENCE ââ */
+gsap.utils.toArray('.audience-item').forEach((a, i) => {
+  gsap.to(a, {
+    opacity: 1, x: 0, duration: 0.7, ease: 'power3.out', delay: i * 0.08,
+    scrollTrigger: { trigger: a, start: 'top 88%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 7. ABOUT ââ */
+gsap.to('.about-content', {
+  opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+  scrollTrigger: { trigger: '.about-content', start: 'top 75%', toggleActions: 'play none none reverse' }
+});
+gsap.utils.toArray('.about-stat').forEach((s, i) => {
+  gsap.to(s, {
+    opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: i * 0.08,
+    scrollTrigger: { trigger: '.about-stats', start: 'top 85%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 8. PRICING ââ */
+gsap.utils.toArray('.pricing-card').forEach((c, i) => {
+  gsap.to(c, {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.14,
+    scrollTrigger: { trigger: c, start: 'top 85%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 9. METRICS ââ */
+gsap.utils.toArray('.metric-card').forEach((c, i) => {
+  gsap.to(c, {
+    opacity: 1, scale: 1, duration: 0.7, ease: 'power3.out', delay: i * 0.09,
+    scrollTrigger: { trigger: c, start: 'top 90%', toggleActions: 'play none none reverse' }
+  });
+});
+
+/* ââ 10. CTA ââ */
+const ctaTl = gsap.timeline({
+  scrollTrigger: { trigger: '.cta-section', start: 'top 55%', toggleActions: 'play none none reverse' }
+});
+ctaTl
+  .to('.cta-glow',    { scale: 1, duration: 1.6, ease: 'power2.out' }, 0)
+  .to('.cta-word',    { y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.12 }, 0.2)
+  .to('.cta-sub',     { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 0.9)
+  .to('.cta-buttons', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 1.1);
+
+/* ââ SMOOTH ANCHOR SCROLL ââ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+/* ââ FORMSPREE ASYNC SUBMIT ââ */
+const form       = document.getElementById('contact-form');
+const successMsg = document.getElementById('form-success');
+if (form) {
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('[type="submit"]');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = 'Sending...';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.reset();
+        successMsg.style.display = 'block';
+        btn.innerHTML = 'Sent â';
+      } else {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        alert('Something went wrong â please email talan@solvramarketing.com directly.');
+      }
+    } catch {
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+      alert('Network error â please try again or email talan@solvramarketing.com.');
+    }
+  });
+}
+
+/* ââ RESIZE â REFRESH SCROLLTRIGGER ââ */
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
+});
+</script>
+</body>
+</html>
