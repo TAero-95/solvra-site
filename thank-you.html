@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You — Solvra Marketing</title>
+<meta name="robots" content="noindex, nofollow">
+
+<meta name="theme-color" content="#0A0E1A">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E1A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300D4FF'/%3E%3C/svg%3E">
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EPST1BTEM9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EPST1BTEM9');
+</script>
+
+<!-- Meta Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '760461627001674');
+  fbq('track', 'PageView');
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0A0E1A;
+  --bg-card: #121828;
+  --accent: #00D4FF;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --gold: #F5A623;
+  --green: #34D399;
+  --green-dim: rgba(52, 211, 153, 0.12);
+  --text: #EAEEF6;
+  --text-muted: #8A94A6;
+  --text-dim: #4A5568;
+  --border: rgba(138, 148, 166, 0.10);
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background effects */
+.glow {
+  position: absolute; width: 500px; height: 500px;
+  top: 30%; left: 50%; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.06), transparent 70%);
+  border-radius: 50%; filter: blur(80px);
+  animation: breathe 6s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); } 50% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.08); } }
+
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 128px;
+}
+
+/* Content */
+.card {
+  position: relative; z-index: 2;
+  max-width: 560px; width: 100%;
+  text-align: center;
+}
+
+/* Checkmark animation */
+.checkmark {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--green-dim);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 32px;
+  animation: pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: scale(0);
+}
+@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+
+.checkmark svg {
+  width: 36px; height: 36px; stroke: var(--green); stroke-width: 2.5;
+  stroke-dasharray: 50; stroke-dashoffset: 50;
+  animation: draw 0.6s 0.3s ease forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.heading {
+  font-family: var(--font-heading); font-weight: 800;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  line-height: 1.1; color: #fff; margin-bottom: 16px;
+}
+.heading em { font-style: italic; color: var(--accent); }
+
+.subtext {
+  font-size: 1rem; line-height: 1.8;
+  color: var(--text-muted); margin-bottom: 40px;
+}
+
+/* What happens next */
+.steps {
+  display: flex; flex-direction: column; gap: 16px;
+  text-align: left; margin-bottom: 40px;
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 28px 32px;
+}
+.steps-title {
+  font-family: var(--font-heading); font-size: 0.85rem;
+  font-weight: 600; color: var(--accent);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.step {
+  display: flex; align-items: flex-start; gap: 14px;
+  font-size: 0.92rem; color: var(--text-muted);
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent-dim); color: var(--accent);
+  font-family: var(--font-heading); font-size: 0.78rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.88rem;
+  padding: 14px 32px; border-radius: 100px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap; text-decoration: none;
+}
+.btn svg { width: 14px; height: 14px; transition: transform 0.3s; }
+.btn:hover svg { transform: translateX(4px); }
+.btn-primary {
+  background: var(--accent); color: var(--bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 2px 16px rgba(0, 212, 255, 0.25);
+}
+.btn-primary:hover {
+  background: #33DDFF; border-color: #33DDFF; transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.35);
+}
+
+/* Footer */
+.footer {
+  position: absolute; bottom: 24px; left: 0; right: 0;
+  text-align: center; font-size: 0.72rem; color: var(--text-dim);
+}
+.footer a { color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+.footer a:hover { color: var(--accent); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<div class="card">
+  <!-- Animated checkmark -->
+  <div class="checkmark" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12.5l5.5 5.5L20 7"/>
+    </svg>
+  </div>
+
+  <h1 class="heading">Message <em>received.</em></h1>
+  <p class="subtext">
+    Thanks for reaching out. We'll get back to you within 24 hours &mdash;
+    usually sooner.
+  </p>
+
+  <div class="steps">
+    <div class="steps-title">What happens next</div>
+    <div class="step">
+      <span class="step-num">1</span>
+      We review your info and do a quick look at your current online presence.
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      We reach out to schedule a 15-minute discovery call &mdash; no pitch, just questions.
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      If we're a good fit, your free custom demo is on the way.
+    </div>
+  </div>
+
+  <a href="/" class="btn btn-primary">
+    Back to Home
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
+<div class="footer">
+  &copy; 2026 <a href="/">Solvra Marketing</a> &middot; Spokane, WA
+</div>
+
+<!-- ═══ CONVERSION TRACKING — fires on page load ═══ -->
+<script>
+  // GA4 — Lead conversion
+  gtag('event', 'conversion', {
+    event_category: 'lead',
+    event_label: 'contact_form',
+    value: 1
+  });
+
+  // Google Ads conversion (uncomment and add your conversion ID + label)
+  // gtag('event', 'conversion', { 'send_to': 'AW-XXXXXXXXX/XXXXXXXXXXXXXXXXXXXX' });
+
+  // Meta Pixel — Lead event
+  fbq('track', 'Lead');
+</script>
+
+</body>
+</html>

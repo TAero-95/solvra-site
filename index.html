@@ -1537,9 +1537,8 @@ img { max-width: 100%; display: block; }
         });
 
         if (res.ok) {
-          form.reset();
-          success.classList.add('show');
-          form.style.display = 'none';
+          window.location.href = '/thank-you.html';
+          return;
         } else {
           error.classList.add('show');
         }
