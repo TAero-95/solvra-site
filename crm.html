@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solvra CRM — Business Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E1A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300D4FF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   RESET & DESIGN TOKENS
+   ═══════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --midnight:#0A0E1A;
+  --midnight-light:#141926;
+  --card:#1A1F2E;
+  --accent:#00D4FF;
+  --gold:#F5A623;
+  --text:#EAEAEA;
+  --text-muted:#8A8F9E;
+  --success:#00C853;
+  --danger:#FF4757;
+  --radius:12px;
+  --sidebar-w:240px;
+  --font-heading:'Syne',sans-serif;
+  --font-body:'Manrope',sans-serif;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--midnight);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,h5{font-family:var(--font-heading);font-weight:700}
+a{color:var(--accent);text-decoration:none}
+button{cursor:pointer;font-family:var(--font-body)}
+input,select,textarea{font-family:var(--font-body);font-size:.93rem}
+
+/* ═══════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════ */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--midnight-light);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  transition:transform .3s;
+}
+.sidebar-logo{
+  padding:1.4rem 1.2rem;
+  font-family:var(--font-heading);
+  font-size:1.35rem;font-weight:800;
+  color:#fff;letter-spacing:.5px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.sidebar-logo span{color:var(--accent)}
+.sidebar-nav{flex:1;padding:.6rem 0}
+.sidebar-nav button{
+  display:flex;align-items:center;gap:.7rem;
+  width:100%;padding:.75rem 1.2rem;
+  background:none;border:none;color:var(--text-muted);
+  font-size:.93rem;font-weight:500;
+  transition:all .2s;text-align:left;
+  border-left:3px solid transparent;
+}
+.sidebar-nav button:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sidebar-nav button.active{
+  color:var(--accent);background:rgba(0,212,255,.06);
+  border-left-color:var(--accent);font-weight:600;
+}
+.sidebar-nav button svg{width:20px;height:20px;flex-shrink:0}
+.main{
+  flex:1;margin-left:var(--sidebar-w);
+  padding:1.5rem 2rem 2rem;
+  min-height:100vh;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE BOTTOM TAB BAR
+   ═══════════════════════════════════════ */
+.bottom-tabs{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--midnight-light);
+  border-top:1px solid rgba(255,255,255,.08);
+  z-index:100;
+  justify-content:space-around;
+  padding:.35rem 0 env(safe-area-inset-bottom,.35rem);
+}
+.bottom-tabs button{
+  display:flex;flex-direction:column;align-items:center;gap:.15rem;
+  background:none;border:none;color:var(--text-muted);
+  font-size:.62rem;padding:.3rem .2rem;font-weight:500;
+  transition:color .2s;
+}
+.bottom-tabs button.active{color:var(--accent)}
+.bottom-tabs button svg{width:22px;height:22px}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0;padding:1rem 1rem 5rem}
+  .bottom-tabs{display:flex}
+}
+
+/* ═══════════════════════════════════════
+   COMMON COMPONENTS
+   ═══════════════════════════════════════ */
+.page-title{font-size:1.6rem;margin-bottom:1.2rem}
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.1rem;border-radius:8px;
+  font-size:.87rem;font-weight:600;border:none;
+  transition:all .2s;
+}
+.btn-primary{background:var(--accent);color:var(--midnight)}
+.btn-primary:hover{background:#33ddff;box-shadow:0 0 16px rgba(0,212,255,.3)}
+.btn-secondary{background:rgba(255,255,255,.08);color:var(--text)}
+.btn-secondary:hover{background:rgba(255,255,255,.14)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#ff5f6d}
+.btn-success{background:var(--success);color:var(--midnight)}
+.btn-sm{padding:.35rem .7rem;font-size:.8rem}
+.btn-icon{
+  background:none;border:none;color:var(--text-muted);
+  padding:.3rem;border-radius:6px;transition:all .2s;
+}
+.btn-icon:hover{color:var(--text);background:rgba(255,255,255,.08)}
+
+/* Cards */
+.stat-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:1.1rem 1.2rem;
+  border:1px solid rgba(255,255,255,.06);
+}
+.stat-card .label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.stat-card .value{font-size:1.7rem;font-weight:800;font-family:var(--font-heading);margin-top:.2rem}
+
+/* Stat grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+
+/* Section card */
+.section-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:1.2rem;border:1px solid rgba(255,255,255,.06);
+  margin-bottom:1.2rem;
+}
+.section-card h3{font-size:1rem;margin-bottom:.8rem}
+
+/* Form elements */
+.form-group{margin-bottom:.9rem}
+.form-group label{display:block;font-size:.8rem;font-weight:600;color:var(--text-muted);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:.55rem .75rem;
+  background:var(--midnight);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;color:var(--text);
+  transition:border-color .2s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(0,212,255,.15);
+}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A8F9E' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:200;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--midnight-light);border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.08);
+  width:95%;max-width:560px;max-height:90vh;overflow-y:auto;
+  padding:1.5rem;transform:translateY(12px);
+  transition:transform .25s;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+.modal-header h2{font-size:1.2rem}
+.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.2rem}
+
+@media(max-width:768px){
+  .modal-overlay{align-items:flex-end}
+  .modal{
+    max-width:100%;border-radius:var(--radius) var(--radius) 0 0;
+    max-height:85vh;
+    transform:translateY(100%);
+  }
+  .modal-overlay.open .modal{transform:translateY(0)}
+}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{
+  text-align:left;font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--text-muted);font-weight:600;
+  padding:.6rem .7rem;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.data-table td{
+  padding:.65rem .7rem;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.87rem;
+}
+.data-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* Badges */
+.badge{
+  display:inline-block;padding:.15rem .5rem;border-radius:20px;
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.3px;
+}
+.badge-cyan{background:rgba(0,212,255,.15);color:var(--accent)}
+.badge-gold{background:rgba(245,166,35,.15);color:var(--gold)}
+.badge-success{background:rgba(0,200,83,.15);color:var(--success)}
+.badge-danger{background:rgba(255,71,87,.15);color:var(--danger)}
+.badge-muted{background:rgba(138,143,158,.15);color:var(--text-muted)}
+
+/* Status dots */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.4rem}
+
+/* Empty state */
+.empty-state{
+  text-align:center;padding:3rem 1rem;color:var(--text-muted);
+}
+.empty-state svg{width:48px;height:48px;margin-bottom:.8rem;opacity:.4}
+.empty-state p{font-size:.9rem;margin-bottom:.8rem}
+
+/* Search bar */
+.search-bar{
+  display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;
+  align-items:center;
+}
+.search-bar input{
+  flex:1;min-width:180px;
+  padding:.5rem .8rem;background:var(--card);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;color:var(--text);font-size:.87rem;
+}
+.search-bar input:focus{outline:none;border-color:var(--accent)}
+.search-bar select{
+  padding:.5rem .8rem;background:var(--card);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;color:var(--text);font-size:.85rem;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A8F9E' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .6rem center;
+  padding-right:1.8rem;
+}
+
+/* Confirm dialog */
+.confirm-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:300;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.confirm-overlay.open{opacity:1;pointer-events:auto}
+.confirm-box{
+  background:var(--midnight-light);border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.1);
+  padding:1.5rem;max-width:400px;width:90%;text-align:center;
+}
+.confirm-box h3{margin-bottom:.6rem;font-size:1.1rem}
+.confirm-box p{color:var(--text-muted);font-size:.87rem;margin-bottom:1rem}
+.confirm-box .confirm-actions{display:flex;gap:.6rem;justify-content:center}
+.confirm-box input{
+  margin-bottom:.8rem;
+  padding:.5rem .7rem;background:var(--midnight);
+  border:1px solid rgba(255,255,255,.1);border-radius:8px;
+  color:var(--text);width:100%;text-align:center;font-size:.9rem;
+}
+
+/* ═══════════════════════════════════════
+   PIPELINE / KANBAN
+   ═══════════════════════════════════════ */
+.kanban{display:flex;gap:.8rem;overflow-x:auto;padding-bottom:.5rem;min-height:50vh}
+.kanban-col{
+  min-width:220px;width:220px;flex-shrink:0;
+  background:var(--midnight-light);border-radius:var(--radius);
+  display:flex;flex-direction:column;
+  border:1px solid rgba(255,255,255,.04);
+}
+.kanban-col-header{
+  padding:.7rem .8rem;font-size:.78rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  color:var(--text-muted);
+}
+.kanban-col-header .count{
+  background:rgba(255,255,255,.08);border-radius:12px;
+  padding:.1rem .45rem;font-size:.7rem;
+}
+.kanban-col-body{flex:1;padding:.5rem;display:flex;flex-direction:column;gap:.4rem;min-height:80px}
+.kanban-col-body.drag-over{background:rgba(0,212,255,.04);border-radius:0 0 var(--radius) var(--radius)}
+
+.kanban-card{
+  background:var(--card);border-radius:8px;padding:.6rem .7rem;
+  border-left:3px solid var(--text-muted);
+  cursor:grab;transition:all .15s;
+  font-size:.82rem;
+}
+.kanban-card:hover{background:rgba(26,31,46,.9);transform:translateY(-1px)}
+.kanban-card.dragging{opacity:.4}
+.kanban-card.lp{border-left-color:var(--accent)}
+.kanban-card.standard{border-left-color:var(--gold)}
+.kanban-card .card-biz{font-weight:700;font-size:.85rem;margin-bottom:.15rem}
+.kanban-card .card-contact{color:var(--text-muted);font-size:.73rem}
+.kanban-card .card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.3rem;font-size:.68rem;color:var(--text-muted)}
+.demo-link-btn{display:block;margin-top:.4rem;padding:.25rem .5rem;font-size:.68rem;font-weight:600;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;text-align:center;text-decoration:none;transition:all .2s}
+.demo-link-btn:hover{background:rgba(0,212,255,.15);border-color:rgba(0,212,255,.4)}
+
+/* ═══════════════════════════════════════
+   INVOICE / CONTRACT PREVIEW
+   ═══════════════════════════════════════ */
+.doc-preview{
+  background:#fff;color:#1a1a1a;border-radius:var(--radius);
+  padding:2.5rem;max-width:750px;margin:0 auto;
+  font-family:'Manrope',sans-serif;font-size:.9rem;line-height:1.65;
+}
+.doc-preview h1{color:#0A0E1A;font-size:1.8rem;letter-spacing:1px}
+.doc-preview h2{color:#0A0E1A;font-size:1rem;margin:1.2rem 0 .4rem;text-transform:uppercase;letter-spacing:.5px}
+.doc-preview .doc-header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #0A0E1A}
+.doc-preview .doc-meta{font-size:.82rem;color:#555}
+.doc-preview table{width:100%;border-collapse:collapse;margin:1rem 0}
+.doc-preview table th{background:#f5f5f5;text-align:left;padding:.5rem .6rem;font-size:.78rem;text-transform:uppercase;border-bottom:2px solid #ddd}
+.doc-preview table td{padding:.5rem .6rem;border-bottom:1px solid #eee}
+.doc-preview .total-row{font-weight:700;font-size:1.05rem}
+.doc-preview .footer-note{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #ddd;font-size:.82rem;color:#777;text-align:center}
+.doc-preview .sig-line{margin-top:2rem;padding-top:1rem;border-top:1px solid #ccc}
+.doc-preview .sig-row{display:flex;justify-content:space-between;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
+.doc-preview .sig-block{flex:1;min-width:200px}
+.doc-preview .sig-block .line{border-bottom:1px solid #333;height:2rem;margin-bottom:.3rem}
+
+/* ═══════════════════════════════════════
+   ACTIVITY FEED
+   ═══════════════════════════════════════ */
+.activity-item{
+  display:flex;gap:.6rem;padding:.5rem 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.82rem;
+}
+.activity-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);margin-top:.35rem;flex-shrink:0;
+}
+.activity-time{color:var(--text-muted);font-size:.7rem;white-space:nowrap}
+
+/* ═══════════════════════════════════════
+   REVIEW TRACKER
+   ═══════════════════════════════════════ */
+.review-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.85rem;
+}
+.review-status{font-size:.85rem}
+
+/* ═══════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════ */
+@media print{
+  body{background:#fff!important;color:#000!important}
+  .sidebar,.bottom-tabs,.main>*:not(#printTarget){display:none!important}
+  .main{margin:0!important;padding:0!important}
+  #printTarget{display:block!important}
+  .doc-preview{box-shadow:none!important;border-radius:0!important;padding:1rem!important}
+  .no-print{display:none!important}
+}
+
+/* ═══════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+
+/* Glow accent */
+.glow-accent{box-shadow:0 0 20px rgba(0,212,255,.12)}
+
+/* Client comm log */
+.comm-log{max-height:250px;overflow-y:auto;margin-top:.5rem}
+.comm-entry{padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem}
+.comm-entry .comm-time{font-size:.7rem;color:var(--text-muted)}
+
+/* Tab filters */
+.tab-filters{display:flex;gap:.3rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab-filters button{
+  padding:.35rem .8rem;border-radius:20px;border:1px solid rgba(255,255,255,.1);
+  background:none;color:var(--text-muted);font-size:.78rem;font-weight:600;
+  transition:all .2s;
+}
+.tab-filters button.active{background:var(--accent);color:var(--midnight);border-color:var(--accent)}
+.tab-filters button:hover:not(.active){border-color:rgba(255,255,255,.2);color:var(--text)}
+
+/* Pipeline bar chart */
+.pipeline-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin-top:.4rem}
+.pipeline-bar div{display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;min-width:20px;transition:width .3s}
+</style>
+</head>
+<body>
+<!-- ═══════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════ -->
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">Solvra<span>.</span></div>
+  <nav class="sidebar-nav" id="sidebarNav"></nav>
+</aside>
+
+<main class="main" id="mainContent"></main>
+</div>
+
+<!-- BOTTOM TAB BAR (mobile) -->
+<nav class="bottom-tabs" id="bottomTabs"></nav>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box" id="confirmBox"></div>
+</div>
+
+<!-- PRINT TARGET (hidden, used for print) -->
+<div id="printTarget" style="display:none"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SOLVRA CRM — SINGLE-FILE LOCAL DASHBOARD
+   All data persists in localStorage.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ───── NAV SECTIONS ───── */
+const NAV_ITEMS = [
+  {id:'dashboard', label:'Dashboard', icon:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>'},
+  {id:'pipeline',  label:'Pipeline',  icon:'<rect x="3" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="5" width="4" height="16" rx="1"/>'},
+  {id:'clients',   label:'Clients',   icon:'<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>'},
+  {id:'invoices',  label:'Invoices',  icon:'<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'},
+  {id:'contracts', label:'Contracts', icon:'<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>'},
+  {id:'settings',  label:'Settings',  icon:'<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/>'},
+];
+
+const PIPELINE_STAGES = ['Outreach','Contacted','Demo Scheduled','Demo Delivered','Won','Lost'];
+const STAGE_COLORS = ['#6366f1','#8b5cf6','#f59e0b','#3b82f6','#00C853','#FF4757'];
+
+/* ───── DATA LAYER ───── */
+/** Load a stored collection or return fallback */
+function loadData(key, fallback = []) {
+  try { return JSON.parse(localStorage.getItem('solvra_' + key)) || fallback; }
+  catch { return fallback; }
+}
+
+/** Persist a collection */
+function saveData(key, data) {
+  localStorage.setItem('solvra_' + key, JSON.stringify(data));
+}
+
+/** Generate a short unique id */
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+/** Get business settings with defaults */
+function getSettings() {
+  return loadData('settings', {
+    bizName: 'Solvra Marketing',
+    ownerName: 'Talan M. Mason',
+    cityState: 'Spokane, WA',
+    address: '',
+    email: 'talan.solvra@gmail.com',
+    phone: '(509) 824-5436',
+    ein: '42-1783738',
+    lpSetup: 500, lpMonthly: 99,
+    stdSetup: 800, stdMonthly: 149,
+    stripeLpSetup: 'https://buy.stripe.com/8x29AM8HYdrR1aFdmAaAw01',
+    stripeLpMonthly: 'https://buy.stripe.com/8x24gscYe2NddXr0zOaAw03',
+    stripeStdSetup: 'https://buy.stripe.com/aFabIU1fwafF6uZ6YcaAw00',
+    stripeStdMonthly: 'https://buy.stripe.com/aFa4gsgaqdrR9Hb6YcaAw04'
+  });
+}
+
+function saveSettings(s) { saveData('settings', s); }
+
+/** Get the right Stripe payment link for an invoice */
+function getStripeLink(inv) {
+  const s = getSettings();
+  const clients = loadData('clients');
+  const client = clients.find(c => c.id === inv.clientId);
+  const pkg = client ? client.package : '';
+  if (inv.invType === 'Setup Fee') {
+    return pkg === 'Launch Partner' ? s.stripeLpSetup : s.stripeStdSetup;
+  }
+  if (inv.invType === 'Monthly Service') {
+    return pkg === 'Launch Partner' ? s.stripeLpMonthly : s.stripeStdMonthly;
+  }
+  // Custom invoices — no auto-link, return empty
+  return '';
+}
+
+/** Activity log — capped at 200 entries */
+function logActivity(action, detail = '') {
+  const log = loadData('activity');
+  log.unshift({ id: uid(), action, detail, ts: Date.now() });
+  if (log.length > 200) log.length = 200;
+  saveData('activity', log);
+}
+
+/** Next invoice number */
+function nextInvoiceNum() {
+  let n = parseInt(localStorage.getItem('solvra_invSeq') || '0', 10) + 1;
+  localStorage.setItem('solvra_invSeq', String(n));
+  return 'SOLV-' + String(n).padStart(3, '0');
+}
+
+/* ───── DATE HELPERS ───── */
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function fmtDateTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
+    d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+function daysAgo(ts) {
+  return Math.max(0, Math.floor((Date.now() - ts) / 86400000));
+}
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function addDays(iso, n) {
+  const d = new Date(iso);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/* ───── SVG helper ───── */
+function svgIcon(inner) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+}
+
+/* ═══════════════════════════════════════
+   NAV RENDERING
+   ═══════════════════════════════════════ */
+let currentPage = 'dashboard';
+
+function renderNav() {
+  const sn = document.getElementById('sidebarNav');
+  const bt = document.getElementById('bottomTabs');
+  sn.innerHTML = '';
+  bt.innerHTML = '';
+  NAV_ITEMS.forEach(item => {
+    const icon = svgIcon(item.icon);
+    // Sidebar button
+    const sb = document.createElement('button');
+    sb.className = item.id === currentPage ? 'active' : '';
+    sb.innerHTML = icon + item.label;
+    sb.onclick = () => navigate(item.id);
+    sn.appendChild(sb);
+    // Bottom tab
+    const tb = document.createElement('button');
+    tb.className = item.id === currentPage ? 'active' : '';
+    tb.innerHTML = icon + `<span>${item.label}</span>`;
+    tb.onclick = () => navigate(item.id);
+    bt.appendChild(tb);
+  });
+}
+
+function navigate(page) {
+  currentPage = page;
+  renderNav();
+  renderPage();
+  window.scrollTo(0, 0);
+}
+
+/* ═══════════════════════════════════════
+   MODAL & CONFIRM HELPERS
+   ═══════════════════════════════════════ */
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function showConfirm(title, msg, onOk, requireType = '') {
+  const box = document.getElementById('confirmBox');
+  box.innerHTML = `<h3>${title}</h3><p>${msg}</p>` +
+    (requireType ? `<input id="confirmInput" placeholder="Type ${requireType} to confirm" autocomplete="off">` : '') +
+    `<div class="confirm-actions">
+       <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+       <button class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+     </div>`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = () => {
+    if (requireType) {
+      const v = document.getElementById('confirmInput').value.trim();
+      if (v !== requireType) return;
+    }
+    closeConfirm();
+    onOk();
+  };
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   PAGE ROUTER
+   ═══════════════════════════════════════ */
+function renderPage() {
+  const mc = document.getElementById('mainContent');
+  switch (currentPage) {
+    case 'dashboard': mc.innerHTML = renderDashboard(); break;
+    case 'pipeline':  mc.innerHTML = renderPipeline(); initKanbanDragDrop(); break;
+    case 'clients':   mc.innerHTML = renderClients(); break;
+    case 'invoices':  mc.innerHTML = renderInvoices(); break;
+    case 'contracts': mc.innerHTML = renderContracts(); break;
+    case 'settings':  mc.innerHTML = renderSettings(); break;
+  }
+}
+
+/* ═══════════════════════════════════════
+   1. DASHBOARD
+   ═══════════════════════════════════════ */
+function renderDashboard() {
+  const leads = loadData('leads');
+  const clients = loadData('clients');
+  const invoices = loadData('invoices');
+  const activity = loadData('activity');
+  const s = getSettings();
+
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+  const leadsThisMonth = leads.filter(l => l.createdAt >= monthStart).length;
+  const activeClients = clients.filter(c => c.hostingStatus !== 'Cancelled').length;
+
+  // MRR from active clients
+  let mrr = 0;
+  clients.forEach(c => {
+    if (c.hostingStatus === 'Cancelled') return;
+    if (c.package === 'Launch Partner') mrr += (s.lpMonthly || 99);
+    else mrr += (s.stdMonthly || 149);
+  });
+
+  const won = leads.filter(l => l.stage === 'Won').length;
+  const lost = leads.filter(l => l.stage === 'Lost').length;
+  const winRate = (won + lost) > 0 ? Math.round(won / (won + lost) * 100) : 0;
+
+  const unpaidInvoices = invoices.filter(i => i.status === 'Sent' || i.status === 'Draft' || i.status === 'Overdue').length;
+
+  // Pipeline counts per stage
+  const stageCounts = PIPELINE_STAGES.map(st => leads.filter(l => l.stage === st).length);
+  const totalForBar = Math.max(1, stageCounts.reduce((a, b) => a + b, 0));
+
+  // Recent activity
+  const recentActivity = activity.slice(0, 10);
+
+  // Google review tracker — clients with review info
+  const reviewClients = clients.filter(c => c.package === 'Launch Partner');
+
+  let html = `<h1 class="page-title">Dashboard</h1>`;
+
+  // Stat cards
+  html += `<div class="stats-grid">
+    <div class="stat-card glow-accent"><div class="label">Total Leads</div><div class="value">${leads.length}</div></div>
+    <div class="stat-card"><div class="label">Leads This Month</div><div class="value">${leadsThisMonth}</div></div>
+    <div class="stat-card"><div class="label">Active Clients</div><div class="value">${activeClients}</div></div>
+    <div class="stat-card"><div class="label">MRR</div><div class="value" style="color:var(--success)">$${mrr.toLocaleString()}</div></div>
+    <div class="stat-card"><div class="label">Win Rate</div><div class="value">${winRate}%</div></div>
+    <div class="stat-card"><div class="label">Outstanding Invoices</div><div class="value" style="color:${unpaidInvoices ? 'var(--gold)' : 'var(--text)'}">${unpaidInvoices}</div></div>
+  </div>`;
+
+  // Pipeline breakdown bar
+  html += `<div class="section-card"><h3>Pipeline Breakdown</h3>`;
+  if (leads.length === 0) {
+    html += `<p style="color:var(--text-muted);font-size:.85rem">No leads yet.</p>`;
+  } else {
+    html += `<div class="pipeline-bar">`;
+    PIPELINE_STAGES.forEach((st, i) => {
+      const pct = (stageCounts[i] / totalForBar * 100);
+      if (stageCounts[i] > 0) {
+        html += `<div style="width:${pct}%;background:${STAGE_COLORS[i]}" title="${st}: ${stageCounts[i]}">${stageCounts[i]}</div>`;
+      }
+    });
+    html += `</div>`;
+    html += `<div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.5rem;font-size:.72rem">`;
+    PIPELINE_STAGES.forEach((st, i) => {
+      html += `<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${STAGE_COLORS[i]};margin-right:.25rem;vertical-align:middle"></span>${st} (${stageCounts[i]})</span>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  // Two column layout for activity + reviews
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">`;
+
+  // Recent Activity
+  html += `<div class="section-card"><h3>Recent Activity</h3>`;
+  if (recentActivity.length === 0) {
+    html += `<p style="color:var(--text-muted);font-size:.85rem">No activity yet. Add a lead to get started!</p>`;
+  } else {
+    recentActivity.forEach(a => {
+      html += `<div class="activity-item">
+        <div class="activity-dot"></div>
+        <div style="flex:1"><div>${esc(a.action)}</div>${a.detail ? `<div style="color:var(--text-muted);font-size:.73rem">${esc(a.detail)}</div>` : ''}</div>
+        <div class="activity-time">${fmtDateTime(a.ts)}</div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  // Google Review Tracker
+  html += `<div class="section-card"><h3>Google Review Tracker</h3>`;
+  if (reviewClients.length === 0) {
+    html += `<p style="color:var(--text-muted);font-size:.85rem">No Launch Partner clients yet.</p>`;
+  } else {
+    reviewClients.forEach(c => {
+      const st = c.reviewStatus || 'Not Asked';
+      let icon = '<span style="color:var(--danger)">&#10007;</span>';
+      if (st === 'Left Review') icon = '<span style="color:var(--success)">&#10003;</span>';
+      else if (st === 'Reminded') icon = '<span style="color:var(--gold)">&#9203;</span>';
+      html += `<div class="review-item">
+        <span>${esc(c.bizName)}</span>
+        <span class="review-status">${icon} ${st}</span>
+      </div>`;
+    });
+  }
+  html += `</div></div>`;
+
+  return html;
+}
+
+/* ═══════════════════════════════════════
+   2. PIPELINE (KANBAN)
+   ═══════════════════════════════════════ */
+function renderPipeline() {
+  const leads = loadData('leads');
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem">
+    <h1 class="page-title" style="margin-bottom:0">Pipeline</h1>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <input type="text" id="pipelineSearch" placeholder="Search leads..." style="padding:.45rem .7rem;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text);font-size:.85rem;width:180px" oninput="filterPipeline()">
+      <button class="btn btn-primary" onclick="openLeadModal()">+ Add Lead</button>
+    </div>
+  </div>`;
+
+  html += `<div class="kanban" id="kanban">`;
+  PIPELINE_STAGES.forEach((stage, i) => {
+    const stageLeads = leads.filter(l => l.stage === stage);
+    html += `<div class="kanban-col" data-stage="${stage}">
+      <div class="kanban-col-header">
+        <span>${stage}</span>
+        <span class="count">${stageLeads.length}</span>
+      </div>
+      <div class="kanban-col-body" data-stage="${stage}" ondragover="onDragOver(event)" ondrop="onDrop(event, '${stage}')">`;
+    stageLeads.forEach(lead => {
+      const pkgClass = lead.packageInterest === 'Launch Partner' ? 'lp' : lead.packageInterest === 'Standard' ? 'standard' : '';
+      const days = daysAgo(lead.stageChangedAt || lead.createdAt);
+      html += `<div class="kanban-card ${pkgClass}" draggable="true" data-id="${lead.id}"
+        ondragstart="onDragStart(event)" onclick="openLeadDetail('${lead.id}')">
+        <div class="card-biz">${esc(lead.bizName)}</div>
+        <div class="card-contact">${esc(lead.contactName || '—')}</div>
+        <div class="card-meta">
+          <span>${days}d in stage</span>
+          <span class="badge ${pkgClass === 'lp' ? 'badge-cyan' : pkgClass === 'standard' ? 'badge-gold' : 'badge-muted'}">${lead.packageInterest || 'Undecided'}</span>
+        </div>
+        ${lead.demoUrl ? `<a href="${esc(lead.demoUrl)}" target="_blank" onclick="event.stopPropagation()" class="demo-link-btn">View Demo →</a>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+/* Drag and Drop */
+let draggedLeadId = null;
+
+function onDragStart(e) {
+  draggedLeadId = e.target.dataset.id;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function onDrop(e, newStage) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!draggedLeadId) return;
+  moveLeadToStage(draggedLeadId, newStage);
+  draggedLeadId = null;
+}
+
+function initKanbanDragDrop() {
+  document.querySelectorAll('.kanban-col-body').forEach(col => {
+    col.addEventListener('dragleave', e => { col.classList.remove('drag-over'); });
+  });
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragend', () => { card.classList.remove('dragging'); });
+  });
+}
+
+function moveLeadToStage(leadId, newStage) {
+  const leads = loadData('leads');
+  const lead = leads.find(l => l.id === leadId);
+  if (!lead || lead.stage === newStage) return;
+  const oldStage = lead.stage;
+  lead.stage = newStage;
+  lead.stageChangedAt = Date.now();
+  if (!lead.commLog) lead.commLog = [];
+  lead.commLog.unshift({ ts: Date.now(), text: `Stage changed: ${oldStage} → ${newStage}` });
+  saveData('leads', leads);
+  logActivity('Lead stage changed', `${lead.bizName}: ${oldStage} → ${newStage}`);
+
+  // If moved to Won, prompt to convert
+  if (newStage === 'Won') {
+    renderPage();
+    setTimeout(() => promptConvertToClient(lead), 100);
+  } else {
+    renderPage();
+  }
+}
+
+function promptConvertToClient(lead) {
+  showConfirm(
+    'Convert to Client?',
+    `"${lead.bizName}" has been marked as Won. Would you like to create a client record?`,
+    () => openConvertToClientModal(lead)
+  );
+}
+
+function openConvertToClientModal(lead) {
+  const s = getSettings();
+  openModal(`
+    <div class="modal-header"><h2>Convert to Active Client</h2><button class="btn-icon" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Business Name</label><input id="ccBiz" value="${esc(lead.bizName)}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Contact Name</label><input id="ccContact" value="${esc(lead.contactName || '')}"></div>
+      <div class="form-group"><label>Phone</label><input id="ccPhone" value="${esc(lead.phone || '')}"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input id="ccEmail" value="${esc(lead.email || '')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Package</label>
+        <select id="ccPkg">
+          <option value="Launch Partner" ${lead.packageInterest === 'Launch Partner' ? 'selected' : ''}>Launch Partner ($${s.lpSetup} + $${s.lpMonthly}/mo)</option>
+          <option value="Standard" ${lead.packageInterest === 'Standard' ? 'selected' : ''}>Standard ($${s.stdSetup} + $${s.stdMonthly}/mo)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Hosting Status</label>
+        <select id="ccHosting">
+          <option>Building</option><option>Active</option><option>Pending</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Website URL</label><input id="ccUrl" placeholder="https://"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="convertLeadToClient('${lead.id}')">Create Client</button>
+    </div>
+  `);
+}
+
+function convertLeadToClient(leadId) {
+  const leads = loadData('leads');
+  const lead = leads.find(l => l.id === leadId);
+  const clients = loadData('clients');
+
+  const client = {
+    id: uid(),
+    leadId: leadId,
+    bizName: document.getElementById('ccBiz').value.trim() || lead.bizName,
+    contactName: document.getElementById('ccContact').value.trim(),
+    phone: document.getElementById('ccPhone').value.trim(),
+    email: document.getElementById('ccEmail').value.trim(),
+    package: document.getElementById('ccPkg').value,
+    websiteUrl: document.getElementById('ccUrl').value.trim(),
+    hostingStatus: document.getElementById('ccHosting').value,
+    lastUpdate: null,
+    adPlatform: 'None',
+    monthlyAdSpend: 0,
+    reviewStatus: 'Not Asked',
+    reviewDate: null,
+    commLog: [{ ts: Date.now(), text: 'Client record created from pipeline lead.' }],
+    createdAt: Date.now()
+  };
+  clients.push(client);
+  saveData('clients', clients);
+  logActivity('Client created', client.bizName + ' (' + client.package + ')');
+  closeModal();
+  renderPage();
+}
+
+/* Lead modal */
+function openLeadModal(existingId) {
+  const lead = existingId ? loadData('leads').find(l => l.id === existingId) : null;
+  const isEdit = !!lead;
+  openModal(`
+    <div class="modal-header"><h2>${isEdit ? 'Edit Lead' : 'Add New Lead'}</h2><button class="btn-icon" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Business Name *</label><input id="leadBiz" value="${esc(lead?.bizName || '')}" required></div>
+    <div class="form-row">
+      <div class="form-group"><label>Contact Name</label><input id="leadContact" value="${esc(lead?.contactName || '')}"></div>
+      <div class="form-group"><label>Phone</label><input id="leadPhone" value="${esc(lead?.phone || '')}"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input id="leadEmail" type="email" value="${esc(lead?.email || '')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Industry</label><input id="leadIndustry" value="${esc(lead?.industry || '')}"></div>
+      <div class="form-group"><label>Current Website</label><input id="leadWebsite" value="${esc(lead?.currentWebsite || '')}" placeholder="or 'none'"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Package Interest</label>
+        <select id="leadPkg">
+          <option value="Undecided" ${lead?.packageInterest === 'Undecided' ? 'selected' : ''}>Undecided</option>
+          <option value="Launch Partner" ${lead?.packageInterest === 'Launch Partner' ? 'selected' : ''}>Launch Partner</option>
+          <option value="Standard" ${lead?.packageInterest === 'Standard' ? 'selected' : ''}>Standard</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Source</label>
+        <select id="leadSource">
+          <option value="Cold Outreach" ${lead?.source === 'Cold Outreach' ? 'selected' : ''}>Cold Outreach</option>
+          <option value="Website Form" ${lead?.source === 'Website Form' ? 'selected' : ''}>Website Form</option>
+          <option value="Referral" ${lead?.source === 'Referral' ? 'selected' : ''}>Referral</option>
+          <option value="Ad" ${lead?.source === 'Ad' ? 'selected' : ''}>Ad</option>
+          <option value="Other" ${lead?.source === 'Other' ? 'selected' : ''}>Other</option>
+        </select>
+      </div>
+    </div>
+    ${isEdit ? `<div class="form-group"><label>Stage</label>
+      <select id="leadStage">
+        ${PIPELINE_STAGES.map(st => `<option ${lead.stage === st ? 'selected' : ''}>${st}</option>`).join('')}
+      </select>
+    </div>` : ''}
+    <div class="form-group"><label>Demo URL</label><input id="leadDemo" value="${esc(lead?.demoUrl || '')}" placeholder="e.g. https://your-demos.vercel.app/demo/business-slug"></div>
+    <div class="form-group"><label>Notes</label><textarea id="leadNotes">${esc(lead?.notes || '')}</textarea></div>
+    <div class="modal-actions">
+      ${isEdit ? `<button class="btn btn-danger btn-sm" onclick="deleteLead('${lead.id}')">Delete</button>` : ''}
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead('${existingId || ''}')">${isEdit ? 'Save Changes' : 'Add Lead'}</button>
+    </div>
+  `);
+}
+
+function saveLead(existingId) {
+  const biz = document.getElementById('leadBiz').value.trim();
+  if (!biz) { alert('Business name is required.'); return; }
+
+  const leads = loadData('leads');
+  if (existingId) {
+    const lead = leads.find(l => l.id === existingId);
+    if (!lead) return;
+    const oldStage = lead.stage;
+    lead.bizName = biz;
+    lead.contactName = document.getElementById('leadContact').value.trim();
+    lead.phone = document.getElementById('leadPhone').value.trim();
+    lead.email = document.getElementById('leadEmail').value.trim();
+    lead.industry = document.getElementById('leadIndustry').value.trim();
+    lead.currentWebsite = document.getElementById('leadWebsite').value.trim();
+    lead.packageInterest = document.getElementById('leadPkg').value;
+    lead.source = document.getElementById('leadSource').value;
+    lead.notes = document.getElementById('leadNotes').value.trim();
+    lead.demoUrl = document.getElementById('leadDemo').value.trim();
+    const stageEl = document.getElementById('leadStage');
+    if (stageEl && stageEl.value !== oldStage) {
+      lead.stage = stageEl.value;
+      lead.stageChangedAt = Date.now();
+      if (!lead.commLog) lead.commLog = [];
+      lead.commLog.unshift({ ts: Date.now(), text: `Stage changed: ${oldStage} → ${stageEl.value}` });
+      logActivity('Lead stage changed', `${lead.bizName}: ${oldStage} → ${stageEl.value}`);
+    }
+    saveData('leads', leads);
+    logActivity('Lead updated', lead.bizName);
+  } else {
+    const lead = {
+      id: uid(),
+      bizName: biz,
+      contactName: document.getElementById('leadContact').value.trim(),
+      phone: document.getElementById('leadPhone').value.trim(),
+      email: document.getElementById('leadEmail').value.trim(),
+      industry: document.getElementById('leadIndustry').value.trim(),
+      currentWebsite: document.getElementById('leadWebsite').value.trim(),
+      packageInterest: document.getElementById('leadPkg').value,
+      source: document.getElementById('leadSource').value,
+      notes: document.getElementById('leadNotes').value.trim(),
+      demoUrl: document.getElementById('leadDemo').value.trim(),
+      stage: 'Outreach',
+      commLog: [],
+      createdAt: Date.now(),
+      stageChangedAt: Date.now()
+    };
+    leads.push(lead);
+    saveData('leads', leads);
+    logActivity('Lead created', lead.bizName + ' — ' + lead.source);
+  }
+  closeModal();
+  renderPage();
+}
+
+function deleteLead(id) {
+  showConfirm('Delete Lead?', 'This action cannot be undone.', () => {
+    const leads = loadData('leads').filter(l => l.id !== id);
+    saveData('leads', leads);
+    logActivity('Lead deleted');
+    closeModal();
+    renderPage();
+  });
+}
+
+function openLeadDetail(id) {
+  const lead = loadData('leads').find(l => l.id === id);
+  if (!lead) return;
+  const days = daysAgo(lead.stageChangedAt || lead.createdAt);
+  const pkgClass = lead.packageInterest === 'Launch Partner' ? 'badge-cyan' : lead.packageInterest === 'Standard' ? 'badge-gold' : 'badge-muted';
+  const stageColors = { 'Outreach': 'badge-muted', 'Meeting Set': 'badge-cyan', 'Demo Shown': 'badge-gold', 'Proposal Sent': 'badge-gold', 'Follow-Up': 'badge-cyan', 'Won': 'badge-success', 'Lost': 'badge-danger' };
+  const stageBadge = stageColors[lead.stage] || 'badge-muted';
+
+  let commHtml = '';
+  if (lead.commLog && lead.commLog.length > 0) {
+    lead.commLog.forEach(e => {
+      commHtml += `<div class="comm-entry"><div class="comm-time">${fmtDateTime(e.ts)}</div><div>${esc(e.text)}</div></div>`;
+    });
+  } else {
+    commHtml = '<p style="color:var(--text-muted);font-size:.82rem">No communication notes yet.</p>';
+  }
+
+  openModal(`
+    <div class="modal-header">
+      <h2>${esc(lead.bizName)}</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap">
+      <span class="badge ${stageBadge}">${lead.stage}</span>
+      <span class="badge ${pkgClass}">${lead.packageInterest || 'Undecided'}</span>
+      <span class="badge badge-muted">${days}d in stage</span>
+      <span class="badge badge-muted">${lead.source || 'Unknown'}</span>
+    </div>
+
+    ${lead.demoUrl ? `
+    <a href="${esc(lead.demoUrl)}" target="_blank" style="display:flex;align-items:center;gap:.6rem;padding:.65rem 1rem;background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,212,255,.04));border:1px solid rgba(0,212,255,.25);border-radius:10px;text-decoration:none;margin-bottom:1rem;transition:all .2s">
+      <span style="font-size:1.3rem">🖥️</span>
+      <div style="flex:1">
+        <div style="font-size:.85rem;font-weight:600;color:var(--accent)">View Demo Site →</div>
+        <div style="font-size:.72rem;color:var(--text-muted);margin-top:.1rem;word-break:break-all">${esc(lead.demoUrl)}</div>
+      </div>
+    </a>` : `
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.55rem 1rem;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1);border-radius:10px;margin-bottom:1rem">
+      <span style="font-size:1.1rem;opacity:.4">🖥️</span>
+      <div style="flex:1;font-size:.78rem;color:var(--text-muted)">No demo linked — <a href="#" onclick="event.preventDefault();closeModal();openLeadModal('${lead.id}')" style="color:var(--accent);text-decoration:underline">edit lead</a> to add a demo URL</div>
+    </div>`}
+
+    <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.7">
+      ${lead.contactName ? '<strong>Contact:</strong> ' + esc(lead.contactName) + '<br>' : ''}
+      ${lead.phone ? '<strong>Phone:</strong> <a href="tel:' + esc(lead.phone) + '" style="color:var(--accent)">' + esc(lead.phone) + '</a><br>' : ''}
+      ${lead.email ? '<strong>Email:</strong> <a href="mailto:' + esc(lead.email) + '" style="color:var(--accent)">' + esc(lead.email) + '</a><br>' : ''}
+      ${lead.industry ? '<strong>Industry:</strong> ' + esc(lead.industry) + '<br>' : ''}
+      ${lead.currentWebsite ? '<strong>Current Site:</strong> ' + (lead.currentWebsite.toLowerCase() === 'none' ? 'None' : '<a href="' + esc(lead.currentWebsite) + '" target="_blank" style="color:var(--accent)">' + esc(lead.currentWebsite) + '</a>') + '<br>' : ''}
+      ${lead.notes ? '<strong>Notes:</strong> ' + esc(lead.notes) : ''}
+    </div>
+
+    <h3 style="font-size:.9rem;margin-bottom:.4rem">Communication Log</h3>
+    <div class="comm-log">${commHtml}</div>
+    <div style="display:flex;gap:.5rem;margin-top:.7rem">
+      <textarea id="newLeadNote" placeholder="Add a note..." style="flex:1;padding:.45rem .6rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.83rem;min-height:40px;resize:none"></textarea>
+      <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="addLeadCommNote('${lead.id}')">Add</button>
+    </div>
+
+    <div class="modal-actions" style="margin-top:.8rem">
+      <button class="btn btn-danger btn-sm" onclick="deleteLead('${lead.id}')">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal();openLeadModal('${lead.id}')">Edit</button>
+      ${lead.stage !== 'Won' ? `<button class="btn btn-primary btn-sm" onclick="closeModal();promptConvertToClient(loadData('leads').find(l=>l.id==='${lead.id}'))">Convert to Client</button>` : ''}
+    </div>
+  `);
+}
+
+function addLeadCommNote(leadId) {
+  const note = document.getElementById('newLeadNote')?.value.trim();
+  if (!note) return;
+  const leads = loadData('leads');
+  const lead = leads.find(l => l.id === leadId);
+  if (!lead) return;
+  if (!lead.commLog) lead.commLog = [];
+  lead.commLog.unshift({ ts: Date.now(), text: note });
+  saveData('leads', leads);
+  logActivity('Note added', lead.bizName);
+  openLeadDetail(leadId);
+}
+
+function filterPipeline() {
+  const q = (document.getElementById('pipelineSearch')?.value || '').toLowerCase();
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════
+   3. CLIENTS
+   ═══════════════════════════════════════ */
+function renderClients() {
+  const clients = loadData('clients');
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem">
+    <h1 class="page-title" style="margin-bottom:0">Clients</h1>
+    <div style="display:flex;gap:.5rem">
+      <input type="text" id="clientSearch" placeholder="Search clients..." style="padding:.45rem .7rem;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text);font-size:.85rem;width:180px" oninput="filterClientList()">
+      <button class="btn btn-primary" onclick="openClientModal()">+ Add Client</button>
+    </div>
+  </div>`;
+
+  if (clients.length === 0) {
+    html += `<div class="empty-state">
+      ${svgIcon('<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>')}
+      <p>No clients yet. Win a lead or add one manually to get started.</p>
+    </div>`;
+    return html;
+  }
+
+  html += `<div id="clientList">`;
+  clients.forEach(c => {
+    const pkgBadge = c.package === 'Launch Partner' ? 'badge-cyan' : 'badge-gold';
+    const hostBadge = c.hostingStatus === 'Active' ? 'badge-success' : c.hostingStatus === 'Building' ? 'badge-gold' : 'badge-muted';
+    html += `<div class="section-card" style="cursor:pointer" onclick="openClientDetail('${c.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <strong style="font-size:1rem">${esc(c.bizName)}</strong>
+          <div style="color:var(--text-muted);font-size:.82rem;margin-top:.1rem">${esc(c.contactName || '')} ${c.email ? '&middot; ' + esc(c.email) : ''}</div>
+        </div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <span class="badge ${pkgBadge}">${c.package}</span>
+          <span class="badge ${hostBadge}">${c.hostingStatus}</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function filterClientList() {
+  const q = (document.getElementById('clientSearch')?.value || '').toLowerCase();
+  document.querySelectorAll('#clientList .section-card').forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openClientModal(existingId) {
+  const client = existingId ? loadData('clients').find(c => c.id === existingId) : null;
+  const isEdit = !!client;
+  const s = getSettings();
+  openModal(`
+    <div class="modal-header"><h2>${isEdit ? 'Edit Client' : 'Add Client'}</h2><button class="btn-icon" onclick="closeModal()">&times;</button></div>
+    <div class="form-group"><label>Business Name *</label><input id="clBiz" value="${esc(client?.bizName || '')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Contact Name</label><input id="clContact" value="${esc(client?.contactName || '')}"></div>
+      <div class="form-group"><label>Phone</label><input id="clPhone" value="${esc(client?.phone || '')}"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input id="clEmail" value="${esc(client?.email || '')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Package</label>
+        <select id="clPkg">
+          <option value="Launch Partner" ${client?.package === 'Launch Partner' ? 'selected' : ''}>Launch Partner ($${s.lpSetup} + $${s.lpMonthly}/mo)</option>
+          <option value="Standard" ${client?.package === 'Standard' ? 'selected' : ''}>Standard ($${s.stdSetup} + $${s.stdMonthly}/mo)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Hosting Status</label>
+        <select id="clHosting">
+          <option ${client?.hostingStatus === 'Building' ? 'selected' : ''}>Building</option>
+          <option ${client?.hostingStatus === 'Active' ? 'selected' : ''}>Active</option>
+          <option ${client?.hostingStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+          <option ${client?.hostingStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Website URL</label><input id="clUrl" value="${esc(client?.websiteUrl || '')}" placeholder="https://"></div>
+    <div class="form-group"><label>Last Website Update</label><input type="date" id="clLastUpdate" value="${client?.lastUpdate || ''}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Ad Platform</label>
+        <select id="clAdPlatform">
+          <option ${client?.adPlatform === 'None' ? 'selected' : ''}>None</option>
+          <option ${client?.adPlatform === 'Google' ? 'selected' : ''}>Google</option>
+          <option ${client?.adPlatform === 'Meta' ? 'selected' : ''}>Meta</option>
+          <option ${client?.adPlatform === 'Both' ? 'selected' : ''}>Both</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Monthly Ad Spend</label><input type="number" id="clAdSpend" value="${client?.monthlyAdSpend || 0}" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Google Review Status</label>
+        <select id="clReview">
+          <option ${client?.reviewStatus === 'Not Asked' ? 'selected' : ''}>Not Asked</option>
+          <option ${client?.reviewStatus === 'Reminded' ? 'selected' : ''}>Reminded</option>
+          <option ${client?.reviewStatus === 'Left Review' ? 'selected' : ''}>Left Review</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Review Date</label><input type="date" id="clReviewDate" value="${client?.reviewDate || ''}"></div>
+    </div>
+    <div class="modal-actions">
+      ${isEdit ? `<button class="btn btn-danger btn-sm" onclick="deleteClient('${client.id}')">Delete</button>` : ''}
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient('${existingId || ''}')">${isEdit ? 'Save' : 'Add Client'}</button>
+    </div>
+  `);
+}
+
+function saveClient(existingId) {
+  const biz = document.getElementById('clBiz').value.trim();
+  if (!biz) { alert('Business name is required.'); return; }
+  const clients = loadData('clients');
+  const data = {
+    bizName: biz,
+    contactName: document.getElementById('clContact').value.trim(),
+    phone: document.getElementById('clPhone').value.trim(),
+    email: document.getElementById('clEmail').value.trim(),
+    package: document.getElementById('clPkg').value,
+    hostingStatus: document.getElementById('clHosting').value,
+    websiteUrl: document.getElementById('clUrl').value.trim(),
+    lastUpdate: document.getElementById('clLastUpdate').value || null,
+    adPlatform: document.getElementById('clAdPlatform').value,
+    monthlyAdSpend: parseInt(document.getElementById('clAdSpend').value, 10) || 0,
+    reviewStatus: document.getElementById('clReview').value,
+    reviewDate: document.getElementById('clReviewDate').value || null
+  };
+  if (existingId) {
+    const c = clients.find(c => c.id === existingId);
+    if (!c) return;
+    Object.assign(c, data);
+    saveData('clients', clients);
+    logActivity('Client updated', c.bizName);
+  } else {
+    const c = { id: uid(), ...data, commLog: [], createdAt: Date.now() };
+    clients.push(c);
+    saveData('clients', clients);
+    logActivity('Client created', c.bizName);
+  }
+  closeModal();
+  renderPage();
+}
+
+function deleteClient(id) {
+  showConfirm('Delete Client?', 'This cannot be undone.', () => {
+    const clients = loadData('clients').filter(c => c.id !== id);
+    saveData('clients', clients);
+    logActivity('Client deleted');
+    closeModal();
+    renderPage();
+  });
+}
+
+function openClientDetail(id) {
+  const client = loadData('clients').find(c => c.id === id);
+  if (!client) return;
+  const s = getSettings();
+  const pkgBadge = client.package === 'Launch Partner' ? 'badge-cyan' : 'badge-gold';
+  const hostBadge = client.hostingStatus === 'Active' ? 'badge-success' : client.hostingStatus === 'Building' ? 'badge-gold' : 'badge-muted';
+
+  let commHtml = '';
+  if (client.commLog && client.commLog.length > 0) {
+    client.commLog.forEach(e => {
+      commHtml += `<div class="comm-entry"><div class="comm-time">${fmtDateTime(e.ts)}</div><div>${esc(e.text)}</div></div>`;
+    });
+  } else {
+    commHtml = '<p style="color:var(--text-muted);font-size:.82rem">No communication notes yet.</p>';
+  }
+
+  openModal(`
+    <div class="modal-header">
+      <h2>${esc(client.bizName)}</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap">
+      <span class="badge ${pkgBadge}">${client.package}</span>
+      <span class="badge ${hostBadge}">${client.hostingStatus}</span>
+    </div>
+    <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.7">
+      ${client.contactName ? '<strong>Contact:</strong> ' + esc(client.contactName) + '<br>' : ''}
+      ${client.phone ? '<strong>Phone:</strong> ' + esc(client.phone) + '<br>' : ''}
+      ${client.email ? '<strong>Email:</strong> ' + esc(client.email) + '<br>' : ''}
+      ${client.websiteUrl ? '<strong>Website:</strong> <a href="' + esc(client.websiteUrl) + '" target="_blank">' + esc(client.websiteUrl) + '</a><br>' : ''}
+      <strong>Last Update:</strong> ${client.lastUpdate || '—'}<br>
+      <strong>Ad Platform:</strong> ${client.adPlatform || 'None'}${client.monthlyAdSpend ? ' ($' + client.monthlyAdSpend + '/mo)' : ''}<br>
+      <strong>Google Review:</strong> ${client.reviewStatus || 'Not Asked'}${client.reviewDate ? ' (' + client.reviewDate + ')' : ''}
+    </div>
+    <h3 style="font-size:.9rem;margin-bottom:.4rem">Communication Log</h3>
+    <div class="comm-log">${commHtml}</div>
+    <div style="display:flex;gap:.5rem;margin-top:.7rem">
+      <textarea id="newCommNote" placeholder="Add a note..." style="flex:1;padding:.45rem .6rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.83rem;min-height:40px;resize:none"></textarea>
+      <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="addCommNote('${client.id}')">Add</button>
+    </div>
+    <div class="modal-actions" style="margin-top:.8rem">
+      <button class="btn btn-danger btn-sm" onclick="deleteClient('${client.id}')">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal();openClientModal('${client.id}')">Edit</button>
+    </div>
+  `);
+}
+
+function addCommNote(clientId) {
+  const note = document.getElementById('newCommNote')?.value.trim();
+  if (!note) return;
+  const clients = loadData('clients');
+  const c = clients.find(c => c.id === clientId);
+  if (!c) return;
+  if (!c.commLog) c.commLog = [];
+  c.commLog.unshift({ ts: Date.now(), text: note });
+  saveData('clients', clients);
+  logActivity('Note added', c.bizName);
+  openClientDetail(clientId);
+}
+
+/* ═══════════════════════════════════════
+   4. INVOICES
+   ═══════════════════════════════════════ */
+function renderInvoices() {
+  const invoices = loadData('invoices');
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem">
+    <h1 class="page-title" style="margin-bottom:0">Invoices</h1>
+    <button class="btn btn-primary" onclick="openInvoiceForm()">+ New Invoice</button>
+  </div>`;
+
+  // Filter tabs
+  const statuses = ['All','Draft','Sent','Paid','Overdue'];
+  html += `<div class="tab-filters" id="invFilters">`;
+  statuses.forEach(st => {
+    html += `<button class="${st === 'All' ? 'active' : ''}" onclick="filterInvoices('${st}')">${st}</button>`;
+  });
+  html += `</div>`;
+
+  // Outstanding total
+  const outstanding = invoices.filter(i => i.status === 'Sent' || i.status === 'Overdue')
+    .reduce((sum, i) => sum + (i.total || 0), 0);
+  if (outstanding > 0) {
+    html += `<div style="margin-bottom:.8rem;font-size:.85rem;color:var(--gold)">Outstanding: <strong>$${outstanding.toLocaleString()}</strong></div>`;
+  }
+
+  if (invoices.length === 0) {
+    html += `<div class="empty-state">
+      ${svgIcon('<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>')}
+      <p>No invoices yet. Create your first invoice to get started.</p>
+    </div>`;
+    return html;
+  }
+
+  html += `<div id="invoiceList">`;
+  invoices.sort((a, b) => b.createdAt - a.createdAt).forEach(inv => {
+    const stBadge = inv.status === 'Paid' ? 'badge-success' : inv.status === 'Overdue' ? 'badge-danger' : inv.status === 'Sent' ? 'badge-gold' : 'badge-muted';
+    html += `<div class="section-card invoice-row" data-status="${inv.status}" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem" onclick="viewInvoice('${inv.id}')">
+      <div>
+        <strong>${inv.invoiceNum}</strong>
+        <span style="color:var(--text-muted);font-size:.82rem;margin-left:.5rem">${esc(inv.clientBiz)}</span>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center">
+        <span style="font-weight:700">$${(inv.total || 0).toLocaleString()}</span>
+        <span class="badge ${stBadge}">${inv.status}</span>
+        <span style="color:var(--text-muted);font-size:.75rem">${fmtDate(inv.createdAt)}</span>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function filterInvoices(status) {
+  document.querySelectorAll('#invFilters button').forEach(b => b.classList.toggle('active', b.textContent === status));
+  document.querySelectorAll('.invoice-row').forEach(row => {
+    row.style.display = (status === 'All' || row.dataset.status === status) ? '' : 'none';
+  });
+}
+
+function openInvoiceForm(existingId) {
+  const clients = loadData('clients');
+  const s = getSettings();
+  const inv = existingId ? loadData('invoices').find(i => i.id === existingId) : null;
+  const isEdit = !!inv;
+
+  let clientOpts = '<option value="">-- Select Client --</option>';
+  clients.forEach(c => {
+    clientOpts += `<option value="${c.id}" data-pkg="${c.package}" ${inv && inv.clientId === c.id ? 'selected' : ''}>${esc(c.bizName)}</option>`;
+  });
+
+  const lineItems = inv ? inv.lineItems : [{ desc: '', qty: 1, rate: 0 }];
+  let lineHtml = '';
+  lineItems.forEach((li, i) => {
+    lineHtml += lineItemRow(i, li);
+  });
+
+  openModal(`
+    <div class="modal-header"><h2>${isEdit ? 'Edit Invoice' : 'New Invoice'}</h2><button class="btn-icon" onclick="closeModal()">&times;</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client</label><select id="invClient" onchange="invClientChanged()">${clientOpts}</select></div>
+      <div class="form-group"><label>Or Enter Manually</label><input id="invManualClient" value="${esc(inv?.clientBiz || '')}" placeholder="Business name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Invoice Type</label>
+        <select id="invType" onchange="invTypeChanged()">
+          <option value="Custom" ${inv?.invType === 'Custom' || !inv ? 'selected' : ''}>Custom</option>
+          <option value="Setup Fee" ${inv?.invType === 'Setup Fee' ? 'selected' : ''}>Setup Fee</option>
+          <option value="Monthly Service" ${inv?.invType === 'Monthly Service' ? 'selected' : ''}>Monthly Service</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select id="invStatus">
+          <option ${inv?.status === 'Draft' ? 'selected' : ''}>Draft</option>
+          <option ${inv?.status === 'Sent' ? 'selected' : ''}>Sent</option>
+          <option ${inv?.status === 'Paid' ? 'selected' : ''}>Paid</option>
+          <option ${inv?.status === 'Overdue' ? 'selected' : ''}>Overdue</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Invoice Date</label><input type="date" id="invDate" value="${inv?.invoiceDate || todayISO()}"></div>
+      <div class="form-group"><label>Due Date</label><input type="date" id="invDue" value="${inv?.dueDate || addDays(todayISO(), 15)}"></div>
+    </div>
+    <div style="margin-bottom:.6rem">
+      <label style="font-size:.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">Line Items</label>
+      <div id="lineItemsContainer">${lineHtml}</div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:.4rem" onclick="addLineItem()">+ Add Line</button>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="invNotes">${esc(inv?.notes || '')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInvoice('${existingId || ''}')">${isEdit ? 'Save' : 'Create Invoice'}</button>
+    </div>
+  `);
+}
+
+function lineItemRow(i, li) {
+  return `<div class="form-row" style="grid-template-columns:2fr 1fr 1fr auto;gap:.4rem;margin-top:.3rem;align-items:end" data-line="${i}">
+    <div class="form-group" style="margin:0"><input class="li-desc" placeholder="Description" value="${esc(li.desc)}"></div>
+    <div class="form-group" style="margin:0"><input class="li-qty" type="number" min="1" value="${li.qty || 1}" style="width:100%"></div>
+    <div class="form-group" style="margin:0"><input class="li-rate" type="number" min="0" value="${li.rate || 0}" style="width:100%"></div>
+    <button class="btn-icon" onclick="this.parentElement.remove()" title="Remove">&times;</button>
+  </div>`;
+}
+
+function addLineItem() {
+  const c = document.getElementById('lineItemsContainer');
+  const idx = c.children.length;
+  c.insertAdjacentHTML('beforeend', lineItemRow(idx, { desc: '', qty: 1, rate: 0 }));
+}
+
+function invClientChanged() {
+  const sel = document.getElementById('invClient');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.value) {
+    const clients = loadData('clients');
+    const cl = clients.find(c => c.id === opt.value);
+    if (cl) document.getElementById('invManualClient').value = cl.bizName;
+  }
+  invTypeChanged();
+}
+
+function invTypeChanged() {
+  const type = document.getElementById('invType').value;
+  if (type === 'Custom') return;
+  const s = getSettings();
+  const sel = document.getElementById('invClient');
+  const opt = sel.options[sel.selectedIndex];
+  let pkg = 'Standard';
+  if (opt && opt.dataset.pkg) pkg = opt.dataset.pkg;
+
+  let desc = '', rate = 0;
+  if (type === 'Setup Fee') {
+    desc = `Website Setup Fee (${pkg})`;
+    rate = pkg === 'Launch Partner' ? s.lpSetup : s.stdSetup;
+  } else {
+    desc = `Monthly Service Fee (${pkg})`;
+    rate = pkg === 'Launch Partner' ? s.lpMonthly : s.stdMonthly;
+  }
+  const container = document.getElementById('lineItemsContainer');
+  container.innerHTML = lineItemRow(0, { desc, qty: 1, rate });
+}
+
+function gatherLineItems() {
+  const rows = document.querySelectorAll('#lineItemsContainer > div');
+  const items = [];
+  rows.forEach(row => {
+    const desc = row.querySelector('.li-desc')?.value.trim() || '';
+    const qty = parseInt(row.querySelector('.li-qty')?.value, 10) || 1;
+    const rate = parseFloat(row.querySelector('.li-rate')?.value) || 0;
+    if (desc || rate > 0) items.push({ desc, qty, rate, amount: qty * rate });
+  });
+  return items;
+}
+
+function saveInvoice(existingId) {
+  const clientSel = document.getElementById('invClient');
+  const clientId = clientSel.value || '';
+  const clientBiz = document.getElementById('invManualClient').value.trim() || (clientSel.options[clientSel.selectedIndex]?.text) || '';
+  if (!clientBiz || clientBiz === '-- Select Client --') { alert('Please select or enter a client.'); return; }
+
+  const lineItems = gatherLineItems();
+  if (lineItems.length === 0) { alert('Add at least one line item.'); return; }
+  const total = lineItems.reduce((s, li) => s + li.amount, 0);
+
+  // Get client details for invoice
+  let clientContact = '', clientEmail = '';
+  if (clientId) {
+    const cl = loadData('clients').find(c => c.id === clientId);
+    if (cl) { clientContact = cl.contactName; clientEmail = cl.email; }
+  }
+
+  const invoices = loadData('invoices');
+  if (existingId) {
+    const inv = invoices.find(i => i.id === existingId);
+    if (!inv) return;
+    inv.clientId = clientId; inv.clientBiz = clientBiz;
+    inv.clientContact = clientContact; inv.clientEmail = clientEmail;
+    inv.invType = document.getElementById('invType').value;
+    inv.status = document.getElementById('invStatus').value;
+    inv.invoiceDate = document.getElementById('invDate').value;
+    inv.dueDate = document.getElementById('invDue').value;
+    inv.lineItems = lineItems; inv.total = total;
+    inv.notes = document.getElementById('invNotes').value.trim();
+    saveData('invoices', invoices);
+    logActivity('Invoice updated', inv.invoiceNum + ' — $' + total);
+  } else {
+    const inv = {
+      id: uid(),
+      invoiceNum: nextInvoiceNum(),
+      clientId, clientBiz, clientContact, clientEmail,
+      invType: document.getElementById('invType').value,
+      status: document.getElementById('invStatus').value,
+      invoiceDate: document.getElementById('invDate').value,
+      dueDate: document.getElementById('invDue').value,
+      lineItems, total,
+      notes: document.getElementById('invNotes').value.trim(),
+      createdAt: Date.now()
+    };
+    invoices.push(inv);
+    saveData('invoices', invoices);
+    logActivity('Invoice created', inv.invoiceNum + ' — $' + total + ' for ' + clientBiz);
+  }
+  closeModal();
+  renderPage();
+}
+
+function viewInvoice(id) {
+  const inv = loadData('invoices').find(i => i.id === id);
+  if (!inv) return;
+  const s = getSettings();
+
+  let lineRows = '';
+  inv.lineItems.forEach(li => {
+    lineRows += `<tr><td>${esc(li.desc)}</td><td style="text-align:center">${li.qty}</td><td style="text-align:right">$${li.rate.toLocaleString()}</td><td style="text-align:right">$${li.amount.toLocaleString()}</td></tr>`;
+  });
+
+  const preview = `
+    <div class="doc-preview" id="invoicePreview">
+      <div class="doc-header">
+        <div>
+          <h1>INVOICE</h1>
+          <div class="doc-meta">${inv.invoiceNum}</div>
+        </div>
+        <div style="text-align:right">
+          <strong>${esc(s.bizName)}</strong><br>
+          ${esc(s.ownerName)}<br>
+          ${esc(s.cityState)}<br>
+          ${s.address ? esc(s.address) + '<br>' : ''}
+          ${esc(s.email)}<br>
+          ${esc(s.phone)}
+          ${s.ein ? '<br>EIN: ' + esc(s.ein) : ''}
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+        <div>
+          <h2>Bill To</h2>
+          <strong>${esc(inv.clientBiz)}</strong><br>
+          ${inv.clientContact ? esc(inv.clientContact) + '<br>' : ''}
+          ${inv.clientEmail ? esc(inv.clientEmail) : ''}
+        </div>
+        <div style="text-align:right;font-size:.85rem">
+          <div><strong>Invoice Date:</strong> ${inv.invoiceDate}</div>
+          <div><strong>Due Date:</strong> ${inv.dueDate}</div>
+          <div><strong>Status:</strong> ${inv.status}</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Description</th><th style="text-align:center">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>${lineRows}</tbody>
+        <tfoot>
+          <tr class="total-row"><td colspan="3" style="text-align:right;padding-top:.8rem">Total</td><td style="text-align:right;padding-top:.8rem">$${inv.total.toLocaleString()}</td></tr>
+        </tfoot>
+      </table>
+      ${inv.notes ? `<div style="margin-top:1rem;font-size:.85rem;color:#555"><strong>Notes:</strong> ${esc(inv.notes)}</div>` : ''}
+      <div class="footer-note">
+        Payment Terms: Due upon receipt<br><br>
+        ${(() => { const link = getStripeLink(inv); return link ? '<a href="' + link + '" target="_blank" style="display:inline-block;background:#635BFF;color:#fff;padding:.6rem 1.6rem;border-radius:8px;font-weight:600;text-decoration:none;font-size:.95rem">Pay with Stripe →</a>' : ''; })()}<br><br>
+        Thank you for your business
+      </div>
+    </div>
+  `;
+
+  const stBadge = inv.status === 'Paid' ? 'badge-success' : inv.status === 'Overdue' ? 'badge-danger' : inv.status === 'Sent' ? 'badge-gold' : 'badge-muted';
+
+  openModal(`
+    <div class="modal-header no-print">
+      <h2>${inv.invoiceNum}</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="no-print" style="display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap">
+      <span class="badge ${stBadge}">${inv.status}</span>
+      <button class="btn btn-sm btn-secondary" onclick="updateInvoiceStatus('${inv.id}','Sent')">Mark Sent</button>
+      <button class="btn btn-sm btn-success" onclick="updateInvoiceStatus('${inv.id}','Paid')">Mark Paid</button>
+      <button class="btn btn-sm btn-secondary" onclick="printInvoice('${inv.id}')">Print</button>
+      <button class="btn btn-sm btn-secondary" onclick="closeModal();openInvoiceForm('${inv.id}')">Edit</button>
+      ${(() => { const link = getStripeLink(inv); return link ? '<button class="btn btn-sm" style="background:#635BFF;color:#fff" onclick="copyStripeLink(\'' + inv.id + '\')">Copy Payment Link</button>' : ''; })()}
+      <button class="btn btn-sm btn-primary" onclick="sendInvoice('${inv.id}')">Send Invoice</button>
+    </div>
+    <div style="max-height:60vh;overflow-y:auto">${preview}</div>
+  `);
+}
+
+function updateInvoiceStatus(id, status) {
+  const invoices = loadData('invoices');
+  const inv = invoices.find(i => i.id === id);
+  if (!inv) return;
+  inv.status = status;
+  saveData('invoices', invoices);
+  logActivity('Invoice ' + status.toLowerCase(), inv.invoiceNum);
+  closeModal();
+  renderPage();
+}
+
+function sendInvoice(invId) {
+  const inv = loadData('invoices').find(i => i.id === invId);
+  if (!inv) return;
+  const s = getSettings();
+  const stripeLink = getStripeLink(inv);
+
+  // Build line items text
+  let itemsText = '';
+  inv.lineItems.forEach(li => {
+    itemsText += `  ${li.desc} — $${li.amount.toLocaleString()}\n`;
+  });
+
+  const emailBody = `Hi ${inv.clientContact || 'there'},
+
+Please find your invoice details below.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INVOICE ${inv.invoiceNum}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+From: ${s.bizName}
+To: ${inv.clientBiz}
+
+Invoice Date: ${inv.invoiceDate}
+Due Date: ${inv.dueDate}
+
+Items:
+${itemsText}
+Total: $${inv.total.toLocaleString()}
+${inv.notes ? '\nNotes: ' + inv.notes + '\n' : ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${stripeLink ? '\nPay securely online:\n' + stripeLink + '\n' : ''}
+Payment is due upon receipt. If you have any questions about this invoice, feel free to reply to this email.
+
+Thank you for your business!
+
+${s.ownerName}
+${s.bizName}
+${s.phone}
+${s.email}`;
+
+  const subject = `Invoice ${inv.invoiceNum} from ${s.bizName} — $${inv.total.toLocaleString()}`;
+
+  // Show send options modal
+  openModal(`
+    <div class="modal-header">
+      <h2>Send Invoice</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.82rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600">To</label>
+      <input id="sendTo" value="${esc(inv.clientEmail)}" placeholder="client@email.com" style="width:100%;padding:.5rem .7rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.93rem;margin-top:.3rem">
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.82rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Subject</label>
+      <input id="sendSubject" value="${esc(subject)}" style="width:100%;padding:.5rem .7rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.93rem;margin-top:.3rem">
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.82rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Message Preview</label>
+      <textarea id="sendBody" rows="14" style="width:100%;padding:.7rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.85rem;font-family:var(--font-body);line-height:1.5;margin-top:.3rem;resize:vertical">${esc(emailBody)}</textarea>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="openMailto()">Open in Email App</button>
+      <button class="btn btn-secondary" onclick="openGmail()">Open in Gmail</button>
+      <button class="btn btn-secondary" onclick="copyInvoiceEmail()">Copy to Clipboard</button>
+    </div>
+    <p style="font-size:.78rem;color:var(--text-muted);margin-top:.6rem">Edit the message above before sending. "Open in Gmail" launches a Gmail compose window. "Copy to Clipboard" lets you paste into any email or messaging app.</p>
+  `);
+
+  // Store for send functions
+  window._pendingInvId = invId;
+}
+
+function openMailto() {
+  const to = document.getElementById('sendTo').value.trim();
+  const subject = document.getElementById('sendSubject').value;
+  const body = document.getElementById('sendBody').value;
+  window.open('mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+  markAsSent();
+}
+
+function openGmail() {
+  const to = document.getElementById('sendTo').value.trim();
+  const subject = document.getElementById('sendSubject').value;
+  const body = document.getElementById('sendBody').value;
+  window.open('https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(to) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+  markAsSent();
+}
+
+function copyInvoiceEmail() {
+  const body = document.getElementById('sendBody').value;
+  navigator.clipboard.writeText(body).then(() => {
+    alert('Invoice email copied to clipboard! Paste it into your email or messaging app.');
+    markAsSent();
+  }).catch(() => {
+    const ta = document.getElementById('sendBody');
+    ta.select();
+    document.execCommand('copy');
+    alert('Copied! Paste it into your email or messaging app.');
+    markAsSent();
+  });
+}
+
+function markAsSent() {
+  if (!window._pendingInvId) return;
+  const invoices = loadData('invoices');
+  const inv = invoices.find(i => i.id === window._pendingInvId);
+  if (inv && inv.status === 'Draft') {
+    inv.status = 'Sent';
+    saveData('invoices', invoices);
+    logActivity('Invoice sent', inv.invoiceNum + ' to ' + (inv.clientEmail || inv.clientBiz));
+  }
+  window._pendingInvId = null;
+  closeModal();
+  renderPage();
+}
+
+function copyStripeLink(invId) {
+  const inv = loadData('invoices').find(i => i.id === invId);
+  if (!inv) return;
+  const link = getStripeLink(inv);
+  if (!link) return;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }).catch(() => {
+    prompt('Copy this payment link:', link);
+  });
+}
+
+function printInvoice(id) {
+  const inv = loadData('invoices').find(i => i.id === id);
+  if (!inv) return;
+  const s = getSettings();
+  let lineRows = '';
+  inv.lineItems.forEach(li => {
+    lineRows += `<tr><td>${esc(li.desc)}</td><td style="text-align:center">${li.qty}</td><td style="text-align:right">$${li.rate.toLocaleString()}</td><td style="text-align:right">$${li.amount.toLocaleString()}</td></tr>`;
+  });
+  const pt = document.getElementById('printTarget');
+  pt.innerHTML = `<div class="doc-preview">
+    <div class="doc-header"><div><h1>INVOICE</h1><div class="doc-meta">${inv.invoiceNum}</div></div>
+    <div style="text-align:right"><strong>${esc(s.bizName)}</strong><br>${esc(s.ownerName)}<br>${esc(s.cityState)}<br>${s.address ? esc(s.address) + '<br>' : ''}${esc(s.email)}<br>${esc(s.phone)}${s.ein ? '<br>EIN: ' + esc(s.ein) : ''}</div></div>
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+      <div><h2>Bill To</h2><strong>${esc(inv.clientBiz)}</strong><br>${inv.clientContact ? esc(inv.clientContact) + '<br>' : ''}${inv.clientEmail ? esc(inv.clientEmail) : ''}</div>
+      <div style="text-align:right;font-size:.85rem"><div><strong>Invoice Date:</strong> ${inv.invoiceDate}</div><div><strong>Due Date:</strong> ${inv.dueDate}</div></div>
+    </div>
+    <table><thead><tr><th>Description</th><th style="text-align:center">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead>
+    <tbody>${lineRows}</tbody>
+    <tfoot><tr class="total-row"><td colspan="3" style="text-align:right;padding-top:.8rem">Total</td><td style="text-align:right;padding-top:.8rem">$${inv.total.toLocaleString()}</td></tr></tfoot></table>
+    ${inv.notes ? `<div style="margin-top:1rem;font-size:.85rem;color:#555"><strong>Notes:</strong> ${esc(inv.notes)}</div>` : ''}
+    <div class="footer-note">Payment Terms: Due upon receipt<br><br>${(() => { const link = getStripeLink(inv); return link ? 'Pay online: ' + link : ''; })()}<br><br>Thank you for your business</div>
+  </div>`;
+  pt.style.display = 'block';
+  window.print();
+  setTimeout(() => { pt.style.display = 'none'; }, 500);
+}
+
+/* ═══════════════════════════════════════
+   5. CONTRACTS
+   ═══════════════════════════════════════ */
+function renderContracts() {
+  const contracts = loadData('contracts');
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem">
+    <h1 class="page-title" style="margin-bottom:0">Contracts</h1>
+    <button class="btn btn-primary" onclick="openContractForm()">+ New Contract</button>
+  </div>`;
+
+  if (contracts.length === 0) {
+    html += `<div class="empty-state">
+      ${svgIcon('<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>')}
+      <p>No contracts yet. Generate your first service agreement.</p>
+    </div>`;
+    return html;
+  }
+
+  contracts.sort((a, b) => b.createdAt - a.createdAt).forEach(ct => {
+    const pkgBadge = ct.package === 'Launch Partner' ? 'badge-cyan' : 'badge-gold';
+    html += `<div class="section-card" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem" onclick="viewContract('${ct.id}')">
+      <div><strong>${esc(ct.clientBiz)}</strong><span style="color:var(--text-muted);font-size:.82rem;margin-left:.5rem">${ct.startDate}</span></div>
+      <span class="badge ${pkgBadge}">${ct.package}</span>
+    </div>`;
+  });
+  return html;
+}
+
+function openContractForm() {
+  const clients = loadData('clients');
+  let clientOpts = '<option value="">-- Select Client --</option>';
+  clients.forEach(c => {
+    clientOpts += `<option value="${c.id}" data-pkg="${c.package}">${esc(c.bizName)} — ${esc(c.contactName || '')}</option>`;
+  });
+
+  openModal(`
+    <div class="modal-header"><h2>Generate Contract</h2><button class="btn-icon" onclick="closeModal()">&times;</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Client</label><select id="ctClient" onchange="ctClientChanged()">${clientOpts}</select></div>
+      <div class="form-group"><label>Or Enter Manually</label><input id="ctManualBiz" placeholder="Business name"></div>
+    </div>
+    <div class="form-group"><label>Client Contact Name</label><input id="ctContactName" placeholder="Contact name"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Package</label>
+        <select id="ctPkg">
+          <option value="Launch Partner">Launch Partner</option>
+          <option value="Standard">Standard</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Start Date</label><input type="date" id="ctStartDate" value="${todayISO()}"></div>
+    </div>
+    <div class="form-group"><label>Custom Scope Notes (optional)</label><textarea id="ctScope" placeholder="Additional scope items..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="generateContract()">Generate Contract</button>
+    </div>
+  `);
+}
+
+function ctClientChanged() {
+  const sel = document.getElementById('ctClient');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.value) {
+    const cl = loadData('clients').find(c => c.id === opt.value);
+    if (cl) {
+      document.getElementById('ctManualBiz').value = cl.bizName;
+      document.getElementById('ctContactName').value = cl.contactName || '';
+      document.getElementById('ctPkg').value = cl.package || 'Launch Partner';
+    }
+  }
+}
+
+function generateContract() {
+  const clientSel = document.getElementById('ctClient');
+  const clientBiz = document.getElementById('ctManualBiz').value.trim() || (clientSel.value ? clientSel.options[clientSel.selectedIndex]?.text.split(' — ')[0] : '');
+  if (!clientBiz) { alert('Please select or enter a client.'); return; }
+
+  const ct = {
+    id: uid(),
+    clientId: clientSel.value || '',
+    clientBiz,
+    contactName: document.getElementById('ctContactName').value.trim(),
+    package: document.getElementById('ctPkg').value,
+    startDate: document.getElementById('ctStartDate').value,
+    customScope: document.getElementById('ctScope').value.trim(),
+    createdAt: Date.now()
+  };
+  const contracts = loadData('contracts');
+  contracts.push(ct);
+  saveData('contracts', contracts);
+  logActivity('Contract generated', ct.clientBiz + ' (' + ct.package + ')');
+  closeModal();
+  renderPage();
+  setTimeout(() => viewContract(ct.id), 100);
+}
+
+function viewContract(id) {
+  const ct = loadData('contracts').find(c => c.id === id);
+  if (!ct) return;
+  const s = getSettings();
+  const isLP = ct.package === 'Launch Partner';
+  const setupFee = isLP ? s.lpSetup : s.stdSetup;
+  const monthlyFee = isLP ? s.lpMonthly : s.stdMonthly;
+
+  // First monthly payment date: 1st of month following start date
+  const startD = new Date(ct.startDate);
+  const firstPayMonth = new Date(startD.getFullYear(), startD.getMonth() + 1, 1);
+  const firstPayStr = firstPayMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const contractHtml = buildContractHtml(ct, s, setupFee, monthlyFee, firstPayStr);
+
+  openModal(`
+    <div class="modal-header no-print">
+      <h2>Service Agreement</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="no-print" style="display:flex;gap:.4rem;margin-bottom:.8rem">
+      <button class="btn btn-sm btn-secondary" onclick="printContract('${ct.id}')">Print / PDF</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteContract('${ct.id}')">Delete</button>
+    </div>
+    <div style="max-height:65vh;overflow-y:auto">${contractHtml}</div>
+  `);
+}
+
+function buildContractHtml(ct, s, setupFee, monthlyFee, firstPayStr) {
+  return `<div class="doc-preview" id="contractPreview">
+    <h1 style="text-align:center;margin-bottom:.3rem">SERVICE AGREEMENT</h1>
+    <p style="text-align:center;font-size:.85rem;margin-bottom:1.5rem;color:#555">
+      Between: <strong>${esc(s.bizName)}</strong> ("Provider") &mdash; ${esc(s.ownerName)}, ${esc(s.cityState)}${s.ein ? ' &bull; EIN: ' + esc(s.ein) : ''}<br>
+      And: <strong>${esc(ct.clientBiz)}</strong> ("Client") &mdash; ${esc(ct.contactName)}
+    </p>
+    <p style="text-align:center;font-size:.85rem;margin-bottom:1.5rem"><strong>Effective Date:</strong> ${ct.startDate}</p>
+
+    <h2>1. Scope of Services</h2>
+    <p>Provider agrees to deliver the following services under the <strong>${ct.package}</strong> package:</p>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>Custom website design and development</li>
+      <li>Website hosting and maintenance</li>
+      <li>Search engine optimization (SEO) targeting</li>
+      <li>Digital advertising management (Google Ads and/or Meta Ads as applicable)</li>
+      <li>Ongoing website updates and modifications as needed</li>
+    </ul>
+    ${ct.customScope ? `<p style="margin-top:.5rem"><strong>Additional Scope:</strong> ${esc(ct.customScope)}</p>` : ''}
+
+    <h2>2. Compensation</h2>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>One-Time Setup Fee: <strong>$${setupFee}</strong> &mdash; due before work begins</li>
+      <li>Monthly Service Fee: <strong>$${monthlyFee}/month</strong> &mdash; billed on the 1st of each month</li>
+      <li>First monthly payment due on <strong>${firstPayStr}</strong></li>
+    </ul>
+
+    <h2>3. Payment Terms</h2>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>Setup fee is due in full before any work commences</li>
+      <li>Monthly fees are due on the 1st of each month</li>
+      <li>Payments not received within 15 days of the due date are considered past due</li>
+      <li>Provider reserves the right to suspend services for accounts past due by 30 days or more</li>
+    </ul>
+
+    <h2>4. Setup Fee &mdash; Non-Refundable</h2>
+    <p>The one-time setup fee is non-refundable once work has commenced. This fee covers the initial consultation, custom design, development, and launch of the client's website.</p>
+
+    <h2>5. Cancellation Policy</h2>
+    <p>Either party may terminate this agreement with 30 days written notice. Upon cancellation:</p>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>Service continues through the end of the current paid billing period</li>
+      <li>No refund is issued for the current month's service fee</li>
+      <li>The one-time setup fee is non-refundable</li>
+      <li>Client retains ownership of their website content (text, images, logos)</li>
+      <li>Provider retains ownership of proprietary code, templates, and frameworks</li>
+    </ul>
+
+    <h2>6. Intellectual Property</h2>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>Client owns all original content they provide (text, images, branding materials)</li>
+      <li>Provider retains ownership of underlying code, templates, design frameworks, and development tools</li>
+      <li>Client receives a non-exclusive license to use the completed website for the duration of the agreement</li>
+      <li>Upon termination, Provider will make a reasonable effort to assist with website transition if requested</li>
+    </ul>
+
+    <h2>7. Website &amp; Hosting</h2>
+    <ul style="margin:.5rem 0 .5rem 1.2rem;font-size:.88rem">
+      <li>Provider will host the client's website for the duration of this agreement</li>
+      <li>Provider maintains the right to select hosting infrastructure</li>
+      <li>Provider will maintain reasonable uptime and perform regular backups</li>
+      <li>Provider is not liable for downtime caused by third-party services, hosting outages, or force majeure events</li>
+    </ul>
+
+    <h2>8. Limitation of Liability</h2>
+    <p>Provider's total liability under this agreement shall not exceed the total fees paid by Client in the preceding 3 months. Provider is not liable for indirect, incidental, or consequential damages including but not limited to lost profits, lost data, or business interruption.</p>
+
+    <h2>9. Advertising Disclaimer</h2>
+    <p>While Provider will manage digital advertising campaigns on behalf of Client, Provider does not guarantee specific results, leads, or revenue from advertising efforts. Ad performance is influenced by factors outside Provider's control including market conditions, competition, and platform algorithms. Ad spend is the responsibility of the Client and is separate from the monthly service fee.</p>
+
+    <h2>10. Modifications</h2>
+    <p>This agreement may be modified only by written consent of both parties.</p>
+
+    <h2>11. Governing Law</h2>
+    <p>This agreement shall be governed by the laws of the State of Washington.</p>
+
+    <h2>12. Entire Agreement</h2>
+    <p>This document constitutes the entire agreement between the parties and supersedes all prior discussions or agreements.</p>
+
+    <div class="sig-line"></div>
+    <div class="sig-row">
+      <div class="sig-block">
+        <div class="line"></div>
+        <div style="font-size:.85rem"><strong>Provider Signature</strong> &mdash; Date: _________</div>
+        <div style="font-size:.82rem;color:#555">${esc(s.ownerName)}, ${esc(s.bizName)}</div>
+      </div>
+      <div class="sig-block">
+        <div class="line"></div>
+        <div style="font-size:.85rem"><strong>Client Signature</strong> &mdash; Date: _________</div>
+        <div style="font-size:.82rem;color:#555">${esc(ct.contactName)}, ${esc(ct.clientBiz)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function printContract(id) {
+  const ct = loadData('contracts').find(c => c.id === id);
+  if (!ct) return;
+  const s = getSettings();
+  const isLP = ct.package === 'Launch Partner';
+  const setupFee = isLP ? s.lpSetup : s.stdSetup;
+  const monthlyFee = isLP ? s.lpMonthly : s.stdMonthly;
+  const startD = new Date(ct.startDate);
+  const firstPayMonth = new Date(startD.getFullYear(), startD.getMonth() + 1, 1);
+  const firstPayStr = firstPayMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const pt = document.getElementById('printTarget');
+  pt.innerHTML = buildContractHtml(ct, s, setupFee, monthlyFee, firstPayStr);
+  pt.style.display = 'block';
+  window.print();
+  setTimeout(() => { pt.style.display = 'none'; }, 500);
+}
+
+function deleteContract(id) {
+  showConfirm('Delete Contract?', 'This cannot be undone.', () => {
+    const contracts = loadData('contracts').filter(c => c.id !== id);
+    saveData('contracts', contracts);
+    logActivity('Contract deleted');
+    closeModal();
+    renderPage();
+  });
+}
+
+/* ═══════════════════════════════════════
+   6. SETTINGS
+   ═══════════════════════════════════════ */
+function renderSettings() {
+  const s = getSettings();
+  let html = `<h1 class="page-title">Settings</h1>`;
+
+  html += `<div class="section-card">
+    <h3>Business Information</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Business Name</label><input id="setBizName" value="${esc(s.bizName)}"></div>
+      <div class="form-group"><label>Owner Name</label><input id="setOwner" value="${esc(s.ownerName)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>City / State</label><input id="setCityState" value="${esc(s.cityState)}"></div>
+      <div class="form-group"><label>Address / PO Box</label><input id="setAddress" value="${esc(s.address)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input id="setEmail" value="${esc(s.email)}"></div>
+      <div class="form-group"><label>Phone</label><input id="setPhone" value="${esc(s.phone)}"></div>
+    </div>
+    <div class="form-group"><label>EIN <span style="font-weight:400;text-transform:none;color:var(--text-muted)">(Get one free at irs.gov/ein)</span></label><input id="setEIN" value="${esc(s.ein)}"></div>
+    <button class="btn btn-primary" onclick="saveSettingsForm()" style="margin-top:.5rem">Save Business Info</button>
+  </div>`;
+
+  html += `<div class="section-card">
+    <h3>Package Pricing</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Launch Partner Setup ($)</label><input type="number" id="setLPSetup" value="${s.lpSetup}" min="0"></div>
+      <div class="form-group"><label>Launch Partner Monthly ($)</label><input type="number" id="setLPMonthly" value="${s.lpMonthly}" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Standard Setup ($)</label><input type="number" id="setStdSetup" value="${s.stdSetup}" min="0"></div>
+      <div class="form-group"><label>Standard Monthly ($)</label><input type="number" id="setStdMonthly" value="${s.stdMonthly}" min="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="savePricing()" style="margin-top:.5rem">Save Pricing</button>
+  </div>`;
+
+  html += `<div class="section-card">
+    <h3 style="display:flex;align-items:center;gap:.5rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#635BFF" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Stripe Payment Links</h3>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.8rem">Paste your Stripe payment links here. These appear on invoices as "Pay with Stripe" buttons.</p>
+    <div class="form-row">
+      <div class="form-group"><label>Launch Partner Setup</label><input id="setStripeLpSetup" value="${esc(s.stripeLpSetup)}" placeholder="https://buy.stripe.com/..."></div>
+      <div class="form-group"><label>Launch Partner Monthly</label><input id="setStripeLpMonthly" value="${esc(s.stripeLpMonthly)}" placeholder="https://buy.stripe.com/..."></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Standard Setup</label><input id="setStripeStdSetup" value="${esc(s.stripeStdSetup)}" placeholder="https://buy.stripe.com/..."></div>
+      <div class="form-group"><label>Standard Monthly</label><input id="setStripeStdMonthly" value="${esc(s.stripeStdMonthly)}" placeholder="https://buy.stripe.com/..."></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveStripeLinks()" style="margin-top:.5rem">Save Stripe Links</button>
+  </div>`;
+
+  html += `<div class="section-card">
+    <h3>Data Management</h3>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem">
+      <button class="btn btn-secondary" onclick="exportAllData()">Export All Data (JSON)</button>
+      <label class="btn btn-secondary" style="cursor:pointer">Import Data (JSON)
+        <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+      </label>
+      <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+function saveSettingsForm() {
+  const s = getSettings();
+  s.bizName = document.getElementById('setBizName').value.trim() || s.bizName;
+  s.ownerName = document.getElementById('setOwner').value.trim() || s.ownerName;
+  s.cityState = document.getElementById('setCityState').value.trim();
+  s.address = document.getElementById('setAddress').value.trim();
+  s.email = document.getElementById('setEmail').value.trim();
+  s.phone = document.getElementById('setPhone').value.trim();
+  s.ein = document.getElementById('setEIN').value.trim();
+  saveSettings(s);
+  logActivity('Settings updated', 'Business information saved');
+  alert('Business info saved.');
+}
+
+function savePricing() {
+  const s = getSettings();
+  s.lpSetup = parseInt(document.getElementById('setLPSetup').value, 10) || 500;
+  s.lpMonthly = parseInt(document.getElementById('setLPMonthly').value, 10) || 99;
+  s.stdSetup = parseInt(document.getElementById('setStdSetup').value, 10) || 800;
+  s.stdMonthly = parseInt(document.getElementById('setStdMonthly').value, 10) || 149;
+  saveSettings(s);
+  logActivity('Settings updated', 'Package pricing saved');
+  alert('Pricing saved.');
+}
+
+function saveStripeLinks() {
+  const s = getSettings();
+  s.stripeLpSetup = document.getElementById('setStripeLpSetup').value.trim();
+  s.stripeLpMonthly = document.getElementById('setStripeLpMonthly').value.trim();
+  s.stripeStdSetup = document.getElementById('setStripeStdSetup').value.trim();
+  s.stripeStdMonthly = document.getElementById('setStripeStdMonthly').value.trim();
+  saveSettings(s);
+  logActivity('Settings updated', 'Stripe payment links saved');
+  alert('Stripe links saved.');
+}
+
+function exportAllData() {
+  const data = {};
+  const keys = ['leads', 'clients', 'invoices', 'contracts', 'activity', 'settings'];
+  keys.forEach(k => { data[k] = loadData(k, k === 'settings' ? {} : []); });
+  data.invSeq = localStorage.getItem('solvra_invSeq') || '0';
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'solvra-crm-backup-' + todayISO() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  logActivity('Data exported', 'Full backup downloaded');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showConfirm('Import Data?', 'This will REPLACE all existing data. Are you sure?', () => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        const keys = ['leads', 'clients', 'invoices', 'contracts', 'activity', 'settings'];
+        keys.forEach(k => { if (data[k] !== undefined) saveData(k, data[k]); });
+        if (data.invSeq) localStorage.setItem('solvra_invSeq', data.invSeq);
+        logActivity('Data imported', 'Backup restored from file');
+        renderPage();
+        alert('Data imported successfully.');
+      } catch (err) {
+        alert('Invalid JSON file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  });
+  event.target.value = '';
+}
+
+function clearAllData() {
+  showConfirm('Clear All Data?', 'This will permanently delete ALL leads, clients, invoices, contracts, and activity. Type DELETE to confirm.', () => {
+    const keys = ['leads', 'clients', 'invoices', 'contracts', 'activity', 'settings'];
+    keys.forEach(k => localStorage.removeItem('solvra_' + k));
+    localStorage.removeItem('solvra_invSeq');
+    renderPage();
+    alert('All data cleared.');
+  }, 'DELETE');
+}
+
+/* ───── UTILITY: HTML escape ───── */
+function esc(str) {
+  if (!str) return '';
+  const d = document.createElement('div');
+  d.textContent = String(str);
+  return d.innerHTML;
+}
+
+/* ───── INITIALIZATION ───── */
+renderNav();
+renderPage();
+</script>
+</body>
+</html>
