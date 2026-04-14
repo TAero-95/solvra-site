@@ -35,8 +35,11 @@ Single HTML file configurator: 11 industry presets, 5 color themes, live preview
 
 ## Related Repo
 - **solvra-demos** (private) — Next.js multi-demo site for high-quality prospect demos
-  - https://solvra-demos.vercel.app
-  - Current demos: Bean Stalk Espresso, Massie Brothers Concrete
+  - Vercel project: `solvra-demos-v4`
+  - https://solvra-demos-v4.vercel.app
+  - Bean Stalk: https://solvra-demos-v4.vercel.app/demo/bean-stalk-espresso
+  - Massie Brothers: https://solvra-demos-v4.vercel.app/demo/massie-brothers-concrete
+  - Local directory: `bean-stalk-demo` (under Documents/GitHub/)
 
 ## Working Preferences
 - Solo operator, no team — everything built for one person
