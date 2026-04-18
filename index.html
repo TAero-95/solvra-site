@@ -21,7 +21,7 @@
 <meta name="twitter:description" content="Custom-built websites for local businesses. See your demo before you spend a dime.">
 <meta name="twitter:image" content="https://solvramarketing.com/og-image.jpg">
 
-<meta name="theme-color" content="#0A0E1A">
+<meta name="theme-color" content="#0A192F">
 
 <!-- Favicon — inline SVG (no external file needed) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E1A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300D4FF'/%3E%3C/svg%3E">
@@ -95,14 +95,14 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Palette */
-  --bg: #0A0E1A;
-  --bg-card: #121828;
-  --bg-elevated: #1A2035;
-  --bg-surface: #0E1325;
-  --accent: #00D4FF;
-  --accent-dim: rgba(0, 212, 255, 0.12);
-  --accent-glow: rgba(0, 212, 255, 0.06);
+  /* Palette — Navy + Cyan tech aesthetic */
+  --bg: #0A192F;
+  --bg-card: #112240;
+  --bg-elevated: #1B2B4B;
+  --bg-surface: #0D1F3A;
+  --accent: #00FFFF;
+  --accent-dim: rgba(0, 255, 255, 0.12);
+  --accent-glow: rgba(0, 255, 255, 0.06);
   --gold: #F5A623;
   --gold-dim: rgba(245, 166, 35, 0.12);
   --green: #34D399;
@@ -112,7 +112,7 @@
   --text-muted: #8A94A6;
   --text-dim: #4A5568;
   --border: rgba(138, 148, 166, 0.10);
-  --border-accent: rgba(0, 212, 255, 0.20);
+  --border-accent: rgba(0, 255, 255, 0.20);
 
   /* Typography */
   --font-heading: 'Syne', sans-serif;
@@ -218,14 +218,55 @@ img { max-width: 100%; display: block; }
 .btn svg { width: 14px; height: 14px; transition: transform 0.3s; }
 .btn:hover svg { transform: translateX(4px); }
 
+@property --magic-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .btn-primary {
+  position: relative; isolation: isolate;
   background: var(--accent); color: var(--bg);
   border: 1px solid var(--accent);
-  box-shadow: 0 2px 16px rgba(0, 212, 255, 0.25);
+  box-shadow: 0 2px 16px rgba(0, 255, 255, 0.25);
 }
 .btn-primary:hover {
   background: #33DDFF; border-color: #33DDFF; transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.35);
+  box-shadow: 0 6px 24px rgba(0, 255, 255, 0.35);
+}
+
+/* Magic Border: rotating conic-gradient ring */
+.btn-primary::before {
+  content: ''; position: absolute; inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--magic-angle, 0deg),
+    transparent 0%,
+    transparent 55%,
+    #FFFFFF 72%,
+    var(--accent) 88%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+          mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: magic-spin 3.6s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+.btn-primary > * { position: relative; z-index: 1; }
+
+@keyframes magic-spin {
+  to { --magic-angle: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::before { animation: none; }
 }
 
 .btn-outline {
@@ -319,16 +360,47 @@ img { max-width: 100%; display: block; }
   position: absolute; inset: 0;
   background: radial-gradient(ellipse 50% 60% at 35% 50%, var(--accent-glow), transparent);
 }
+/* Perspective Grid — 3D CSS (replaces flat grid) */
 .hero-grid {
   position: absolute; inset: 0;
+  perspective: 640px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 72%, transparent 100%);
+}
+.hero-grid::before,
+.hero-grid::after {
+  content: ''; position: absolute; left: -20%; right: -20%;
   background-image:
-    linear-gradient(rgba(0, 212, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.015) 1px, transparent 1px);
-  background-size: 72px 72px;
+    linear-gradient(rgba(0, 255, 255, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 60px 60px;
+  will-change: transform, background-position;
+}
+.hero-grid::before {
+  top: 50%; height: 120%;
+  transform-origin: 50% 0%;
+  transform: rotateX(62deg);
+  animation: grid-advance 18s linear infinite;
+}
+.hero-grid::after {
+  bottom: 50%; height: 120%;
+  transform-origin: 50% 100%;
+  transform: rotateX(-62deg);
+  animation: grid-advance 18s linear infinite reverse;
+  opacity: 0.35;
+}
+@keyframes grid-advance {
+  from { background-position: 0 0; }
+  to   { background-position: 0 60px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-grid::before, .hero-grid::after { animation: none; }
 }
 .hero-glow {
   position: absolute; width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.06), transparent 70%);
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.06), transparent 70%);
   border-radius: 50%; top: 30%; left: 20%; filter: blur(80px);
   animation: glow-breathe 6s ease-in-out infinite;
 }
@@ -451,9 +523,42 @@ img { max-width: 100%; display: block; }
 
 .service-card {
   background: var(--bg-card); padding: 40px 32px;
+  position: relative; overflow: hidden; isolation: isolate;
   transition: background 0.4s;
 }
 .service-card:hover { background: var(--bg-elevated); }
+
+/* Evervault Matrix: cursor spotlight + dot-matrix reveal */
+.service-card::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(
+    260px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 255, 255, 0.14),
+    transparent 70%
+  );
+  opacity: 0; transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+.service-card:hover::before { opacity: 1; }
+
+.service-card::after {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background-image: radial-gradient(rgba(0, 255, 255, 0.55) 1px, transparent 1px);
+  background-size: 14px 14px;
+  mask-image: radial-gradient(
+    180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    black, transparent 75%
+  );
+  -webkit-mask-image: radial-gradient(
+    180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    black, transparent 75%
+  );
+  opacity: 0; transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+.service-card:hover::after { opacity: 0.6; }
+
+.service-card > * { position: relative; z-index: 1; }
 
 .service-icon {
   width: 44px; height: 44px; border-radius: var(--radius);
@@ -1569,6 +1674,35 @@ img { max-width: 100%; display: block; }
     }, { rootMargin: '-30% 0px -70% 0px' });
 
     sections.forEach(s => navObs.observe(s));
+  }
+
+  /* ──────────────────────────────────────────────
+     Evervault Matrix: cursor-tracking spotlight
+     ────────────────────────────────────────────── */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const matrixCards = document.querySelectorAll('.service-card');
+  if (matrixCards.length && !reduceMotion) {
+    matrixCards.forEach((card) => {
+      let raf = 0;
+      let pendingX = 0;
+      let pendingY = 0;
+      const apply = () => {
+        card.style.setProperty('--mouse-x', pendingX + 'px');
+        card.style.setProperty('--mouse-y', pendingY + 'px');
+        raf = 0;
+      };
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        pendingX = e.clientX - rect.left;
+        pendingY = e.clientY - rect.top;
+        if (!raf) raf = requestAnimationFrame(apply);
+      }, { passive: true });
+      card.addEventListener('mouseleave', () => {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        card.style.removeProperty('--mouse-x');
+        card.style.removeProperty('--mouse-y');
+      }, { passive: true });
+    });
   }
 
 })();
