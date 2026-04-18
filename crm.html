@@ -1618,9 +1618,20 @@ function viewInvoice(id) {
       <button class="btn btn-sm btn-secondary" onclick="closeModal();openInvoiceForm('${inv.id}')">Edit</button>
       ${(() => { const link = getStripeLink(inv); return link ? '<button class="btn btn-sm" style="background:#635BFF;color:#fff" onclick="copyStripeLink(\'' + inv.id + '\')">Copy Payment Link</button>' : ''; })()}
       <button class="btn btn-sm btn-primary" onclick="sendInvoice('${inv.id}')">Send Invoice</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteInvoice('${inv.id}')">Delete</button>
     </div>
     <div style="max-height:60vh;overflow-y:auto">${preview}</div>
   `);
+}
+
+function deleteInvoice(id) {
+  showConfirm('Delete Invoice?', 'This will permanently remove this invoice.', () => {
+    const invoices = loadData('invoices').filter(i => i.id !== id);
+    saveData('invoices', invoices);
+    logActivity('Invoice deleted');
+    closeModal();
+    renderPage();
+  });
 }
 
 function updateInvoiceStatus(id, status) {
