@@ -1,0 +1,13 @@
+# API keys
+tools/.env
+
+# Scraper output batches
+tools/batch-*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.claude/launch.json

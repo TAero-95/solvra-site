@@ -389,6 +389,44 @@ input,select,textarea{font-family:var(--font-body);font-size:.93rem}
 /* Glow accent */
 .glow-accent{box-shadow:0 0 20px rgba(0,212,255,.12)}
 
+/* ═══════════════════════════════════════
+   PROSPECTING
+   ═══════════════════════════════════════ */
+.prospect-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.prospect-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.06);
+  border-left:3px solid #a78bfa;
+  cursor:pointer;transition:all .2s;
+}
+.prospect-card:hover{background:rgba(26,31,46,.9);transform:translateY(-1px);border-color:rgba(167,139,250,.3)}
+.prospect-card.stage-contacted{border-left-color:#38bdf8}
+.prospect-card.stage-responded{border-left-color:#fbbf24}
+.prospect-card.stage-converted{border-left-color:#34d399}
+.prospect-card .p-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.prospect-card .p-biz{font-weight:700;font-size:.95rem}
+.prospect-card .p-industry{font-size:.72rem;color:var(--text-muted)}
+.prospect-card .p-owner{font-size:.82rem;color:var(--text-muted);margin-bottom:.4rem}
+.prospect-card .p-signals{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+.prospect-card .p-signal{
+  font-size:.65rem;padding:.15rem .45rem;border-radius:12px;
+  background:rgba(167,139,250,.1);color:#c4b5fd;font-weight:600;
+}
+.prospect-card .p-signal.good{background:rgba(52,211,153,.1);color:#6ee7b7}
+.prospect-card .p-signal.warn{background:rgba(251,191,36,.1);color:#fcd34d}
+.prospect-brief{
+  background:var(--midnight);border-radius:8px;padding:.8rem;
+  margin:.8rem 0;font-size:.82rem;line-height:1.6;
+  border:1px solid rgba(255,255,255,.06);max-height:200px;overflow-y:auto;
+}
+.prospect-email-preview{
+  background:var(--midnight);border-radius:8px;padding:.8rem;
+  margin:.8rem 0;font-size:.82rem;line-height:1.6;
+  border:1px solid rgba(167,139,250,.15);max-height:250px;overflow-y:auto;
+  white-space:pre-wrap;
+}
+.prospect-meta{display:flex;gap:.6rem;flex-wrap:wrap;font-size:.72rem;color:var(--text-muted);margin-top:.4rem}
+
 /* Client comm log */
 .comm-log{max-height:250px;overflow-y:auto;margin-top:.5rem}
 .comm-entry{padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem}
@@ -447,6 +485,7 @@ input,select,textarea{font-family:var(--font-body);font-size:.93rem}
 /* ───── NAV SECTIONS ───── */
 const NAV_ITEMS = [
   {id:'dashboard', label:'Dashboard', icon:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>'},
+  {id:'prospecting', label:'Prospecting', icon:'<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>'},
   {id:'pipeline',  label:'Pipeline',  icon:'<rect x="3" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="5" width="4" height="16" rx="1"/>'},
   {id:'clients',   label:'Clients',   icon:'<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>'},
   {id:'invoices',  label:'Invoices',  icon:'<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'},
@@ -456,6 +495,9 @@ const NAV_ITEMS = [
 
 const PIPELINE_STAGES = ['Outreach','Contacted','Demo Scheduled','Demo Delivered','Won','Lost'];
 const STAGE_COLORS = ['#6366f1','#8b5cf6','#f59e0b','#3b82f6','#00C853','#FF4757'];
+
+const PROSPECT_STAGES = ['New','Contacted','Responded','Converted'];
+const PROSPECT_COLORS = ['#a78bfa','#38bdf8','#fbbf24','#34d399'];
 
 /* ───── DATA LAYER ───── */
 /** Load a stored collection or return fallback */
@@ -624,6 +666,7 @@ function renderPage() {
   const mc = document.getElementById('mainContent');
   switch (currentPage) {
     case 'dashboard': mc.innerHTML = renderDashboard(); break;
+    case 'prospecting': mc.innerHTML = renderProspecting(); break;
     case 'pipeline':  mc.innerHTML = renderPipeline(); initKanbanDragDrop(); break;
     case 'clients':   mc.innerHTML = renderClients(); break;
     case 'invoices':  mc.innerHTML = renderInvoices(); break;
@@ -662,6 +705,12 @@ function renderDashboard() {
 
   const unpaidInvoices = invoices.filter(i => i.status === 'Sent' || i.status === 'Draft' || i.status === 'Overdue').length;
 
+  // Prospect stats
+  const prospects = loadData('prospects');
+  const newProspects = prospects.filter(p => p.stage === 'New').length;
+  const contactedProspects = prospects.filter(p => p.stage === 'Contacted').length;
+  const respondedProspects = prospects.filter(p => p.stage === 'Responded').length;
+
   // Pipeline counts per stage
   const stageCounts = PIPELINE_STAGES.map(st => leads.filter(l => l.stage === st).length);
   const totalForBar = Math.max(1, stageCounts.reduce((a, b) => a + b, 0));
@@ -682,6 +731,7 @@ function renderDashboard() {
     <div class="stat-card"><div class="label">MRR</div><div class="value" style="color:var(--success)">$${mrr.toLocaleString()}</div></div>
     <div class="stat-card"><div class="label">Win Rate</div><div class="value">${winRate}%</div></div>
     <div class="stat-card"><div class="label">Outstanding Invoices</div><div class="value" style="color:${unpaidInvoices ? 'var(--gold)' : 'var(--text)'}">${unpaidInvoices}</div></div>
+    <div class="stat-card" style="border-left:3px solid #a78bfa"><div class="label">Prospects</div><div class="value" style="color:#a78bfa">${prospects.length}</div></div>
   </div>`;
 
   // Pipeline breakdown bar
@@ -2198,6 +2248,434 @@ function clearAllData() {
     renderPage();
     alert('All data cleared.');
   }, 'DELETE');
+}
+
+/* ═══════════════════════════════════════
+   PROSPECTING — Scraped Lead Management
+   ═══════════════════════════════════════ */
+function renderProspecting() {
+  const prospects = loadData('prospects');
+  let html = `<h1 class="page-title">Prospecting</h1>`;
+
+  // Stats row
+  const stageCounts = PROSPECT_STAGES.map(st => prospects.filter(p => p.stage === st).length);
+  html += `<div class="stats-grid">
+    <div class="stat-card" style="border-left:3px solid ${PROSPECT_COLORS[0]}"><div class="label">New</div><div class="value">${stageCounts[0]}</div></div>
+    <div class="stat-card" style="border-left:3px solid ${PROSPECT_COLORS[1]}"><div class="label">Contacted</div><div class="value">${stageCounts[1]}</div></div>
+    <div class="stat-card" style="border-left:3px solid ${PROSPECT_COLORS[2]}"><div class="label">Responded</div><div class="value">${stageCounts[2]}</div></div>
+    <div class="stat-card" style="border-left:3px solid ${PROSPECT_COLORS[3]}"><div class="label">Converted</div><div class="value">${stageCounts[3]}</div></div>
+  </div>`;
+
+  // Toolbar
+  html += `<div class="search-bar">
+    <input type="text" placeholder="Search prospects..." oninput="filterProspects()" id="prospectSearch">
+    <select onchange="filterProspectStage()" id="prospectStageFilter">
+      <option value="">All Stages</option>
+      ${PROSPECT_STAGES.map(s => `<option value="${s}">${s}</option>`).join('')}
+    </select>
+    <button class="btn btn-primary" onclick="openProspectModal()">+ Add Prospect</button>
+    <button class="btn btn-secondary" onclick="openImportProspectsModal()">Import Batch</button>
+  </div>`;
+
+  // Prospect cards
+  if (prospects.length === 0) {
+    html += `<div class="empty-state">
+      ${svgIcon('<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>')}
+      <p>No prospects yet. Add prospects manually or import a scraped batch.</p>
+    </div>`;
+  } else {
+    html += `<div class="prospect-grid" id="prospectGrid">`;
+    // Sort: New first, then by createdAt desc
+    const stageOrder = {New:0, Contacted:1, Responded:2, Converted:3};
+    const sorted = [...prospects].sort((a,b) => (stageOrder[a.stage]||0) - (stageOrder[b.stage]||0) || b.createdAt - a.createdAt);
+    sorted.forEach(p => {
+      const stageClass = 'stage-' + p.stage.toLowerCase();
+      const signals = [];
+      if (p.reviewCount) signals.push({text: p.reviewCount + ' reviews', cls: p.reviewCount >= 10 ? 'good' : ''});
+      if (p.rating) signals.push({text: p.rating + ' stars', cls: p.rating >= 4.5 ? 'good' : p.rating >= 4 ? '' : 'warn'});
+      if (p.websiteStatus === 'none') signals.push({text: 'No website', cls: 'warn'});
+      else if (p.websiteStatus) signals.push({text: p.websiteStatus, cls: 'warn'});
+      if (p.yearsBiz) signals.push({text: p.yearsBiz + ' yrs in biz', cls: ''});
+
+      html += `<div class="prospect-card ${stageClass}" onclick="openProspectDetail('${p.id}')" data-search="${esc(p.bizName)} ${esc(p.owner)} ${esc(p.industry)} ${esc(p.city)}" data-stage="${p.stage}">
+        <div class="p-header">
+          <div>
+            <div class="p-biz">${esc(p.bizName)}</div>
+            <div class="p-industry">${esc(p.industry || '')} ${p.city ? '&middot; ' + esc(p.city) : ''}</div>
+          </div>
+          <span class="badge ${p.stage === 'New' ? 'badge-muted' : p.stage === 'Contacted' ? 'badge-cyan' : p.stage === 'Responded' ? 'badge-gold' : 'badge-success'}">${p.stage}</span>
+        </div>
+        ${p.owner ? `<div class="p-owner">${esc(p.owner)}</div>` : ''}
+        ${signals.length ? `<div class="p-signals">${signals.map(s => `<span class="p-signal ${s.cls}">${s.text}</span>`).join('')}</div>` : ''}
+        <div class="prospect-meta">
+          ${p.phone ? `<span>${esc(p.phone)}</span>` : ''}
+          ${p.email ? `<span>${esc(p.email)}</span>` : ''}
+          <span>${fmtDate(p.createdAt)}</span>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  return html;
+}
+
+function filterProspects() {
+  const q = (document.getElementById('prospectSearch')?.value || '').toLowerCase();
+  const stageFilter = document.getElementById('prospectStageFilter')?.value || '';
+  document.querySelectorAll('.prospect-card').forEach(c => {
+    const matchText = !q || (c.dataset.search || '').toLowerCase().includes(q);
+    const matchStage = !stageFilter || c.dataset.stage === stageFilter;
+    c.style.display = (matchText && matchStage) ? '' : 'none';
+  });
+}
+function filterProspectStage() { filterProspects(); }
+
+function openProspectModal(existingId) {
+  const prospects = loadData('prospects');
+  const p = existingId ? prospects.find(x => x.id === existingId) : null;
+  const isEdit = !!p;
+  const title = isEdit ? 'Edit Prospect' : 'Add Prospect';
+
+  let html = `<div class="modal-header"><h2>${title}</h2><button class="btn-icon" onclick="closeModal()">${svgIcon('<path d="M6 18L18 6M6 6l12 12"/>')}</button></div>`;
+  html += `<div class="form-row">
+    <div class="form-group"><label>Business Name *</label><input id="pBizName" value="${esc(p?.bizName || '')}"></div>
+    <div class="form-group"><label>Owner / Contact</label><input id="pOwner" value="${esc(p?.owner || '')}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Phone</label><input id="pPhone" value="${esc(p?.phone || '')}"></div>
+    <div class="form-group"><label>Email</label><input id="pEmail" value="${esc(p?.email || '')}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Industry</label><input id="pIndustry" placeholder="e.g. Plumbing, Restaurant" value="${esc(p?.industry || '')}"></div>
+    <div class="form-group"><label>City</label><input id="pCity" value="${esc(p?.city || 'Spokane')}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Google Rating</label><input id="pRating" type="number" step="0.1" min="0" max="5" value="${p?.rating || ''}"></div>
+    <div class="form-group"><label>Review Count</label><input id="pReviewCount" type="number" value="${p?.reviewCount || ''}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Website Status</label>
+      <select id="pWebsiteStatus">
+        <option value="none" ${(p?.websiteStatus||'none')==='none'?'selected':''}>No website</option>
+        <option value="outdated" ${p?.websiteStatus==='outdated'?'selected':''}>Outdated / bad</option>
+        <option value="basic" ${p?.websiteStatus==='basic'?'selected':''}>Basic / template</option>
+        <option value="decent" ${p?.websiteStatus==='decent'?'selected':''}>Decent (still winnable)</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Years in Business</label><input id="pYearsBiz" type="number" value="${p?.yearsBiz || ''}"></div>
+  </div>
+  <div class="form-group"><label>Competitor (who's beating them online)</label><input id="pCompetitor" placeholder="e.g. ABC Plumbing - ranks #1" value="${esc(p?.competitor || '')}"></div>
+  <div class="form-group"><label>Personalization Hooks</label><textarea id="pHooks" placeholder="Recent 5-star review, just hired, opened new location...">${esc(p?.hooks || '')}</textarea></div>
+  <div class="form-group"><label>LLM Lead Brief</label><textarea id="pBrief" style="min-height:100px" placeholder="Paste or auto-fill from scraper analysis...">${esc(p?.brief || '')}</textarea></div>
+  <div class="form-group"><label>Draft Outreach Email</label><textarea id="pDraftEmail" style="min-height:120px" placeholder="Paste or auto-fill from email generator...">${esc(p?.draftEmail || '')}</textarea></div>`;
+
+  if (isEdit) {
+    html += `<div class="form-group"><label>Stage</label>
+      <select id="pStage">${PROSPECT_STAGES.map(s => `<option value="${s}" ${p.stage===s?'selected':''}>${s}</option>`).join('')}</select>
+    </div>`;
+  }
+
+  html += `<div class="modal-actions">`;
+  if (isEdit) html += `<button class="btn btn-danger btn-sm" onclick="deleteProspect('${p.id}')">Delete</button>`;
+  html += `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-primary" onclick="saveProspect('${existingId || ''}')">Save</button>
+  </div>`;
+
+  openModal(html);
+}
+
+function saveProspect(existingId) {
+  const bizName = document.getElementById('pBizName').value.trim();
+  if (!bizName) return alert('Business name is required.');
+
+  const prospects = loadData('prospects');
+  const data = {
+    bizName,
+    owner: document.getElementById('pOwner').value.trim(),
+    phone: document.getElementById('pPhone').value.trim(),
+    email: document.getElementById('pEmail').value.trim(),
+    industry: document.getElementById('pIndustry').value.trim(),
+    city: document.getElementById('pCity').value.trim(),
+    rating: parseFloat(document.getElementById('pRating').value) || null,
+    reviewCount: parseInt(document.getElementById('pReviewCount').value) || null,
+    websiteStatus: document.getElementById('pWebsiteStatus').value,
+    yearsBiz: parseInt(document.getElementById('pYearsBiz').value) || null,
+    competitor: document.getElementById('pCompetitor').value.trim(),
+    hooks: document.getElementById('pHooks').value.trim(),
+    brief: document.getElementById('pBrief').value.trim(),
+    draftEmail: document.getElementById('pDraftEmail').value.trim(),
+  };
+
+  if (existingId) {
+    const idx = prospects.findIndex(p => p.id === existingId);
+    if (idx >= 0) {
+      const oldStage = prospects[idx].stage;
+      const newStage = document.getElementById('pStage')?.value || oldStage;
+      Object.assign(prospects[idx], data);
+      if (newStage !== oldStage) {
+        prospects[idx].stage = newStage;
+        prospects[idx].stageChangedAt = Date.now();
+        logActivity('Prospect moved to ' + newStage, bizName);
+      } else {
+        logActivity('Prospect updated', bizName);
+      }
+    }
+  } else {
+    prospects.push({
+      id: uid(),
+      ...data,
+      stage: 'New',
+      commLog: [],
+      createdAt: Date.now(),
+      stageChangedAt: Date.now(),
+    });
+    logActivity('Prospect added', bizName);
+  }
+  saveData('prospects', prospects);
+  closeModal();
+  renderPage();
+}
+
+function deleteProspect(id) {
+  showConfirm('Delete Prospect', 'Remove this prospect permanently?', () => {
+    let prospects = loadData('prospects');
+    const p = prospects.find(x => x.id === id);
+    prospects = prospects.filter(x => x.id !== id);
+    saveData('prospects', prospects);
+    logActivity('Prospect deleted', p?.bizName || '');
+    closeModal();
+    renderPage();
+  });
+}
+
+function openProspectDetail(id) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p) return;
+
+  const stageIdx = PROSPECT_STAGES.indexOf(p.stage);
+  const stageColor = PROSPECT_COLORS[stageIdx] || '#a78bfa';
+
+  let html = `<div class="modal-header"><h2>${esc(p.bizName)}</h2><button class="btn-icon" onclick="closeModal()">${svgIcon('<path d="M6 18L18 6M6 6l12 12"/>')}</button></div>`;
+
+  // Stage + signals
+  html += `<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+    <span class="badge" style="background:${stageColor}22;color:${stageColor}">${p.stage}</span>
+    ${p.industry ? `<span class="badge badge-muted">${esc(p.industry)}</span>` : ''}
+    ${p.city ? `<span class="badge badge-muted">${esc(p.city)}</span>` : ''}
+    ${p.websiteStatus === 'none' ? '<span class="badge badge-danger">No Website</span>' : p.websiteStatus ? `<span class="badge badge-gold">${esc(p.websiteStatus)} site</span>` : ''}
+    ${p.rating ? `<span class="badge badge-success">${p.rating} stars</span>` : ''}
+    ${p.reviewCount ? `<span class="badge badge-cyan">${p.reviewCount} reviews</span>` : ''}
+    ${p.yearsBiz ? `<span class="badge badge-muted">${p.yearsBiz} yrs</span>` : ''}
+    <span class="badge badge-muted">${daysAgo(p.createdAt)}d ago</span>
+  </div>`;
+
+  // Contact info
+  html += `<div class="section-card"><h3>Contact</h3>
+    ${p.owner ? `<div style="font-size:.87rem;margin-bottom:.3rem"><strong>Owner:</strong> ${esc(p.owner)}</div>` : ''}
+    ${p.phone ? `<div style="font-size:.87rem;margin-bottom:.3rem"><strong>Phone:</strong> <a href="tel:${esc(p.phone)}">${esc(p.phone)}</a></div>` : ''}
+    ${p.email ? `<div style="font-size:.87rem;margin-bottom:.3rem"><strong>Email:</strong> <a href="mailto:${esc(p.email)}">${esc(p.email)}</a></div>` : ''}
+    ${p.competitor ? `<div style="font-size:.87rem;margin-bottom:.3rem"><strong>Competitor:</strong> ${esc(p.competitor)}</div>` : ''}
+  </div>`;
+
+  // Hooks
+  if (p.hooks) {
+    html += `<div class="section-card"><h3>Personalization Hooks</h3><div style="font-size:.85rem;line-height:1.7;color:var(--text-muted)">${esc(p.hooks)}</div></div>`;
+  }
+
+  // LLM Brief
+  if (p.brief) {
+    html += `<div class="section-card"><h3>Lead Brief (Analysis)</h3><div class="prospect-brief">${esc(p.brief)}</div></div>`;
+  }
+
+  // Draft email
+  if (p.draftEmail) {
+    html += `<div class="section-card"><h3>Draft Outreach Email</h3>
+      <div class="prospect-email-preview">${esc(p.draftEmail)}</div>
+      <div style="display:flex;gap:.5rem;margin-top:.5rem">
+        <button class="btn btn-sm btn-primary" onclick="copyProspectEmail('${p.id}')">Copy Email</button>
+        ${p.email ? `<button class="btn btn-sm btn-secondary" onclick="openProspectMailto('${p.id}')">Open in Email App</button>` : ''}
+        ${p.email ? `<button class="btn btn-sm btn-secondary" onclick="openProspectGmail('${p.id}')">Open in Gmail</button>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // Comm log
+  html += `<div class="section-card"><h3>Notes</h3>`;
+  if (p.commLog && p.commLog.length > 0) {
+    html += `<div class="comm-log">`;
+    p.commLog.forEach(e => {
+      html += `<div class="comm-entry"><div class="comm-time">${fmtDateTime(e.ts)}</div><div>${esc(e.text)}</div></div>`;
+    });
+    html += `</div>`;
+  }
+  html += `<div style="display:flex;gap:.5rem;margin-top:.6rem">
+    <input id="prospectNote" placeholder="Add a note..." style="flex:1;padding:.45rem .65rem;background:var(--midnight);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.85rem">
+    <button class="btn btn-sm btn-secondary" onclick="addProspectNote('${p.id}')">Add</button>
+  </div></div>`;
+
+  // Actions
+  html += `<div class="modal-actions" style="flex-wrap:wrap">
+    <button class="btn btn-danger btn-sm" onclick="deleteProspect('${p.id}')">Delete</button>
+    <button class="btn btn-secondary btn-sm" onclick="openProspectModal('${p.id}')">Edit</button>`;
+
+  // Stage actions
+  if (p.stage === 'New') {
+    html += `<button class="btn btn-sm" style="background:#38bdf8;color:var(--midnight)" onclick="moveProspectStage('${p.id}','Contacted')">Mark Contacted</button>`;
+  } else if (p.stage === 'Contacted') {
+    html += `<button class="btn btn-sm" style="background:#fbbf24;color:var(--midnight)" onclick="moveProspectStage('${p.id}','Responded')">Mark Responded</button>`;
+  }
+  if (p.stage !== 'Converted') {
+    html += `<button class="btn btn-success btn-sm" onclick="convertProspectToLead('${p.id}')">Move to Pipeline</button>`;
+  }
+  html += `</div>`;
+
+  openModal(html);
+}
+
+function addProspectNote(id) {
+  const text = document.getElementById('prospectNote')?.value?.trim();
+  if (!text) return;
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p) return;
+  if (!p.commLog) p.commLog = [];
+  p.commLog.unshift({ ts: Date.now(), text });
+  saveData('prospects', prospects);
+  openProspectDetail(id);
+}
+
+function moveProspectStage(id, newStage) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p || p.stage === newStage) return;
+  p.stage = newStage;
+  p.stageChangedAt = Date.now();
+  if (!p.commLog) p.commLog = [];
+  p.commLog.unshift({ ts: Date.now(), text: 'Moved to ' + newStage });
+  saveData('prospects', prospects);
+  logActivity('Prospect: ' + newStage, p.bizName);
+  openProspectDetail(id);
+}
+
+function convertProspectToLead(id) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p) return;
+
+  showConfirm('Move to Pipeline', `Convert "${p.bizName}" to a Pipeline lead? This moves them to your active sales pipeline.`, () => {
+    // Create lead from prospect
+    const leads = loadData('leads');
+    leads.push({
+      id: uid(),
+      bizName: p.bizName,
+      contactName: p.owner || '',
+      phone: p.phone || '',
+      email: p.email || '',
+      industry: p.industry || '',
+      currentWebsite: '',
+      packageInterest: 'Undecided',
+      source: 'Cold Outreach',
+      notes: (p.brief ? 'BRIEF: ' + p.brief + '\n\n' : '') + (p.hooks ? 'HOOKS: ' + p.hooks : ''),
+      demoUrl: '',
+      stage: 'Outreach',
+      commLog: p.commLog || [],
+      createdAt: Date.now(),
+      stageChangedAt: Date.now(),
+    });
+    saveData('leads', leads);
+
+    // Mark prospect as converted
+    p.stage = 'Converted';
+    p.stageChangedAt = Date.now();
+    if (!p.commLog) p.commLog = [];
+    p.commLog.unshift({ ts: Date.now(), text: 'Converted to Pipeline lead' });
+    saveData('prospects', prospects);
+
+    logActivity('Prospect converted to lead', p.bizName);
+    closeModal();
+    renderPage();
+  });
+}
+
+function copyProspectEmail(id) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p || !p.draftEmail) return;
+  navigator.clipboard.writeText(p.draftEmail).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Email'; }, 1500);
+  });
+}
+
+function openProspectMailto(id) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p) return;
+  const subject = encodeURIComponent('Your website — ' + p.bizName);
+  const body = encodeURIComponent(p.draftEmail || '');
+  window.open(`mailto:${p.email}?subject=${subject}&body=${body}`);
+}
+
+function openProspectGmail(id) {
+  const prospects = loadData('prospects');
+  const p = prospects.find(x => x.id === id);
+  if (!p) return;
+  const subject = encodeURIComponent('Your website — ' + p.bizName);
+  const body = encodeURIComponent(p.draftEmail || '');
+  window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(p.email)}&su=${subject}&body=${body}`);
+}
+
+function openImportProspectsModal() {
+  let html = `<div class="modal-header"><h2>Import Prospect Batch</h2><button class="btn-icon" onclick="closeModal()">${svgIcon('<path d="M6 18L18 6M6 6l12 12"/>')}</button></div>`;
+  html += `<p style="font-size:.87rem;color:var(--text-muted);margin-bottom:1rem">Paste a JSON array of prospects from your scraping pipeline. Each object should have: bizName, owner, phone, email, industry, city, rating, reviewCount, websiteStatus, yearsBiz, competitor, hooks, brief, draftEmail.</p>`;
+  html += `<div class="form-group"><label>JSON Data</label><textarea id="importProspectJson" style="min-height:200px;font-family:monospace;font-size:.78rem" placeholder='[{"bizName":"Joe\'s Plumbing","owner":"Joe","industry":"plumbing","city":"Spokane",...}]'></textarea></div>`;
+  html += `<div class="modal-actions">
+    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-primary" onclick="importProspectBatch()">Import</button>
+  </div>`;
+  openModal(html);
+}
+
+function importProspectBatch() {
+  const raw = document.getElementById('importProspectJson')?.value?.trim();
+  if (!raw) return alert('Paste JSON data first.');
+  let batch;
+  try { batch = JSON.parse(raw); } catch { return alert('Invalid JSON. Check formatting.'); }
+  if (!Array.isArray(batch)) return alert('Expected a JSON array.');
+
+  const prospects = loadData('prospects');
+  let added = 0;
+  batch.forEach(item => {
+    if (!item.bizName) return;
+    prospects.push({
+      id: uid(),
+      bizName: item.bizName || '',
+      owner: item.owner || '',
+      phone: item.phone || '',
+      email: item.email || '',
+      industry: item.industry || '',
+      city: item.city || 'Spokane',
+      rating: parseFloat(item.rating) || null,
+      reviewCount: parseInt(item.reviewCount) || null,
+      websiteStatus: item.websiteStatus || 'none',
+      yearsBiz: parseInt(item.yearsBiz) || null,
+      competitor: item.competitor || '',
+      hooks: item.hooks || '',
+      brief: item.brief || '',
+      draftEmail: item.draftEmail || '',
+      stage: 'New',
+      commLog: [],
+      createdAt: Date.now(),
+      stageChangedAt: Date.now(),
+    });
+    added++;
+  });
+  saveData('prospects', prospects);
+  logActivity('Imported ' + added + ' prospects', 'Batch import');
+  closeModal();
+  renderPage();
 }
 
 /* ───── UTILITY: HTML escape ───── */
