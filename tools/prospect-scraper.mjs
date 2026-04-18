@@ -84,6 +84,49 @@ const industries = TARGET_INDUSTRY
   ? [TARGET_INDUSTRY]
   : DEFAULT_INDUSTRIES;
 
+// ─── Industry → Demo URL Map ────────────────────────────────
+// When cold-emailing, the LLM references the closest-matching live demo.
+// All live on solvra-demos-v7.vercel.app
+const DEMO_LIBRARY = {
+  'coffee shop':      'https://solvra-demos-v7.vercel.app/demo/bean-stalk-espresso',
+  'cafe':             'https://solvra-demos-v7.vercel.app/demo/bean-stalk-espresso',
+  'bakery':           'https://solvra-demos-v7.vercel.app/demo/bean-stalk-espresso',
+  'restaurant':       'https://solvra-demos-v7.vercel.app/demo/bean-stalk-espresso',
+
+  'concrete':         'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'contractor':       'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'roofing':          'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'remodeling':       'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'painting':         'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'landscaping':      'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+  'construction':     'https://solvra-demos-v7.vercel.app/demo/massie-brothers-concrete',
+
+  'accounting':       'https://solvra-demos-v7.vercel.app/demo/d-hudson-inc',
+  'tax':              'https://solvra-demos-v7.vercel.app/demo/d-hudson-inc',
+  'cpa':              'https://solvra-demos-v7.vercel.app/demo/d-hudson-inc',
+  'bookkeeping':      'https://solvra-demos-v7.vercel.app/demo/edison-accounting',
+  'payroll':          'https://solvra-demos-v7.vercel.app/demo/edison-accounting',
+  'financial':        'https://solvra-demos-v7.vercel.app/demo/d-hudson-inc',
+
+  'law':              'https://solvra-demos-v7.vercel.app/demo/brewer-firm',
+  'attorney':         'https://solvra-demos-v7.vercel.app/demo/brewer-firm',
+  'lawyer':           'https://solvra-demos-v7.vercel.app/demo/brewer-firm',
+  'family law':       'https://solvra-demos-v7.vercel.app/demo/brewer-firm',
+  'divorce':          'https://solvra-demos-v7.vercel.app/demo/dudley-conner-law',
+  'legal':            'https://solvra-demos-v7.vercel.app/demo/brewer-firm',
+};
+
+function pickDemoForIndustry(industry) {
+  if (!industry) return 'https://solvra-demos-v7.vercel.app';
+  const lower = industry.toLowerCase();
+  // Exact or contained match
+  for (const [key, url] of Object.entries(DEMO_LIBRARY)) {
+    if (lower.includes(key)) return url;
+  }
+  // Fallback: generic demo hub
+  return 'https://solvra-demos-v7.vercel.app';
+}
+
 // ─── Apify Helpers ───────────────────────────────────────────
 const APIFY_BASE = 'https://api.apify.com/v2';
 
@@ -220,6 +263,8 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact f
 
 // ─── LLM Step 2: Personalized Cold Email ────────────────────
 async function generateEmail(lead, brief) {
+  const demoUrl = pickDemoForIndustry(brief.industry || lead.category);
+
   const prompt = `You are writing a cold outreach email for Talan Mason, owner of Solvra Marketing in Spokane, WA. Solvra builds modern, mobile-first websites for local businesses.
 
 PRICING (do NOT put in the email, but know it for context):
@@ -237,13 +282,14 @@ LEAD INFO:
 - Competitor: ${brief.competitor || 'Unknown'}
 - Personalization Hooks: ${brief.hooks || 'None'}
 - Brief: ${brief.brief || 'Local business without web presence'}
+- Relevant Demo URL (for their industry): ${demoUrl}
 
 RULES:
 1. Subject line first, then blank line, then email body
-2. Keep it under 120 words — short, punchy, conversational
+2. Keep it under 130 words — short, punchy, conversational
 3. Lead with a genuine compliment or observation about THEIR business (use the hooks)
 4. Create urgency with competitor gap (someone else is getting their customers online)
-5. Offer a free custom demo site — no commitment, just to show what's possible
+5. Reference the demo URL naturally — say something like "Here's an example I built for another [industry] business:" and include the link so they can click and see real work
 6. Sign off as Talan, Solvra Marketing
 7. NO price mentions, NO jargon, NO "I noticed you don't have a website" (too generic)
 8. Sound like a real person, not a sales template
