@@ -6,10 +6,10 @@
 <title>Thank You — Solvra Marketing</title>
 <meta name="robots" content="noindex, nofollow">
 
-<meta name="theme-color" content="#0A0E1A">
+<meta name="theme-color" content="#0A192F">
 
 <!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E1A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300D4FF'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A192F'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300FFFF'/%3E%3C/svg%3E">
 
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EPST1BTEM9"></script>
@@ -33,6 +33,7 @@
   fbq('init', '760461627001674');
   fbq('track', 'PageView');
 </script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=760461627001674&ev=PageView&noscript=1" alt=""></noscript>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,16 +44,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0A0E1A;
-  --bg-card: #121828;
-  --accent: #00D4FF;
-  --accent-dim: rgba(0, 212, 255, 0.12);
+  --bg: #0A192F;
+  --bg-card: #112240;
+  --accent: #00FFFF;
+  --accent-dim: rgba(0, 255, 255, 0.12);
   --gold: #F5A623;
   --green: #34D399;
   --green-dim: rgba(52, 211, 153, 0.12);
   --text: #EAEEF6;
   --text-muted: #8A94A6;
-  --text-dim: #4A5568;
+  --text-dim: #8091A8;
   --border: rgba(138, 148, 166, 0.10);
   --font-heading: 'Syne', sans-serif;
   --font-body: 'Manrope', sans-serif;
@@ -68,20 +69,20 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
+  padding: 40px 24px 24px;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden; /* never trap vertical scroll on short viewports */
 }
 
 /* Background effects */
 .glow {
   position: absolute; width: 500px; height: 500px;
   top: 30%; left: 50%; transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.06), transparent 70%);
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.06), transparent 70%);
   border-radius: 50%; filter: blur(80px);
   animation: breathe 6s ease-in-out infinite;
 }
@@ -98,6 +99,7 @@ body {
   position: relative; z-index: 2;
   max-width: 560px; width: 100%;
   text-align: center;
+  margin-top: auto; /* pairs with footer's margin-top:auto to center on tall viewports */
 }
 
 /* Checkmark animation */
@@ -169,22 +171,28 @@ body {
 .btn-primary {
   background: var(--accent); color: var(--bg);
   border: 1px solid var(--accent);
-  box-shadow: 0 2px 16px rgba(0, 212, 255, 0.25);
+  box-shadow: 0 2px 16px rgba(0, 255, 255, 0.25);
 }
 .btn-primary:hover {
   background: #33DDFF; border-color: #33DDFF; transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.35);
+  box-shadow: 0 6px 24px rgba(0, 255, 255, 0.35);
 }
 
-/* Footer */
+/* Footer — flows below the card, never overlaps it */
 .footer {
-  position: absolute; bottom: 24px; left: 0; right: 0;
+  margin-top: auto; padding-top: 32px;
   text-align: center; font-size: 0.72rem; color: var(--text-dim);
 }
 .footer a { color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
 .footer a:hover { color: var(--accent); }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .checkmark { animation: none; transform: scale(1); }
+  .checkmark svg { animation: none; stroke-dashoffset: 0; }
+  .glow { animation: none; }
+}
 </style>
 </head>
 
@@ -229,23 +237,27 @@ body {
 </div>
 
 <div class="footer">
-  &copy; 2026 <a href="/">Solvra Marketing</a> &middot; Spokane, WA
+  &copy; 2026 <a href="/">Solvra Marketing</a> &middot; Spokane, WA &middot; <a href="/privacy.html">Privacy</a>
 </div>
 
-<!-- ═══ CONVERSION TRACKING — fires on page load ═══ -->
+<!-- ═══ CONVERSION TRACKING — fires once per session, not on every reload ═══ -->
 <script>
-  // GA4 — Lead conversion
-  gtag('event', 'conversion', {
-    event_category: 'lead',
-    event_label: 'contact_form',
-    value: 1
-  });
+  (function() {
+    var KEY = 'solvra_lead_fired';
+    try {
+      if (sessionStorage.getItem(KEY)) return;
+      sessionStorage.setItem(KEY, '1');
+    } catch (e) { /* storage blocked — fall through and fire once */ }
 
-  // Google Ads conversion (uncomment and add your conversion ID + label)
-  // gtag('event', 'conversion', { 'send_to': 'AW-XXXXXXXXX/XXXXXXXXXXXXXXXXXXXX' });
+    // GA4 recommended lead event (mark generate_lead as a key event in GA4 admin)
+    gtag('event', 'generate_lead', { currency: 'USD', value: 1 });
 
-  // Meta Pixel — Lead event
-  fbq('track', 'Lead');
+    // Google Ads conversion (uncomment and add your conversion ID + label)
+    // gtag('event', 'conversion', { 'send_to': 'AW-XXXXXXXXX/XXXXXXXXXXXXXXXXXXXX' });
+
+    // Meta Pixel — Lead event
+    fbq('track', 'Lead');
+  })();
 </script>
 
 </body>

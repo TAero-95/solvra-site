@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solvra — Partner Overview</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A192F">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A192F'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300FFFF'/%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════
+   TOKENS
+   ══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0A192F;
+  --bg-card: #112240;
+  --bg-elevated: #1B2B4B;
+  --accent: #00FFFF;
+  --accent-dim: rgba(0, 255, 255, 0.12);
+  --accent-glow: rgba(0, 255, 255, 0.06);
+  --gold: #F5A623;
+  --gold-dim: rgba(245, 166, 35, 0.12);
+  --green: #34D399;
+  --green-dim: rgba(52, 211, 153, 0.12);
+  --text: #EAEEF6;
+  --text-muted: #8A94A6;
+  --text-dim: #4A5568;
+  --border: rgba(138, 148, 166, 0.10);
+  --border-accent: rgba(0, 255, 255, 0.20);
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 90; opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 128px;
+}
+
+/* Ambient glow */
+.glow {
+  position: fixed; width: 640px; height: 640px; z-index: 0;
+  top: 20%; left: 12%;
+  background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+  border-radius: 50%; filter: blur(90px); pointer-events: none;
+  animation: breathe 7s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100% { opacity: 0.5; } 50% { opacity: 0.9; } }
+
+/* ══════════════════════════════════════════════════
+   DECK / SLIDES
+   ══════════════════════════════════════════════════ */
+.deck { position: fixed; inset: 0; z-index: 1; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  opacity: 0; visibility: hidden;
+  transform: translateY(26px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease), visibility 0s linear 0.55s;
+  overflow-y: auto;
+}
+.slide.active {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease), visibility 0s;
+  z-index: 2;
+}
+
+.slide-inner {
+  width: 100%; max-width: 1060px;
+  padding: 84px 56px 132px;
+  margin: auto;
+}
+@media (max-width: 700px) { .slide-inner { padding: 72px 24px 140px; } }
+
+/* Stagger children */
+.st { opacity: 0; transform: translateY(18px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+.slide.active .st  { opacity: 1; transform: none; }
+.slide.active .st1 { transition-delay: 0.12s; }
+.slide.active .st2 { transition-delay: 0.22s; }
+.slide.active .st3 { transition-delay: 0.32s; }
+.slide.active .st4 { transition-delay: 0.42s; }
+.slide.active .st5 { transition-delay: 0.52s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .st { transition: none !important; transform: none !important; }
+  .title-badge .pulse, .glow { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════
+   TYPOGRAPHY
+   ══════════════════════════════════════════════════ */
+.label {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+}
+.label::before { content: ''; width: 26px; height: 1.5px; background: var(--accent); }
+
+h1, h2 {
+  font-family: var(--font-heading); font-weight: 800;
+  line-height: 1.06; color: #fff; letter-spacing: -0.015em;
+}
+h2 { font-size: clamp(1.9rem, 4.6vw, 3.3rem); margin-bottom: 22px; }
+h2 em, h1 em { font-style: italic; color: var(--accent); }
+
+.sub {
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem); line-height: 1.8;
+  color: var(--text-muted); max-width: 640px;
+}
+
+/* ══════════════════════════════════════════════════
+   SHARED COMPONENTS
+   ══════════════════════════════════════════════════ */
+.cards { display: grid; gap: 2px; border-radius: var(--radius-lg); overflow: hidden; margin-top: 40px; }
+.cards-3 { grid-template-columns: repeat(3, 1fr); }
+.cards-2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 820px) { .cards-3, .cards-2 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--bg-card); padding: 30px 28px;
+}
+.card h3 {
+  font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;
+  color: #fff; margin-bottom: 8px;
+}
+.card p { font-size: 0.88rem; line-height: 1.7; color: var(--text-muted); }
+
+.card-icon {
+  width: 40px; height: 40px; border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; color: var(--accent); background: var(--accent-dim);
+}
+.card-icon svg { width: 20px; height: 20px; }
+.card-icon.gold { color: var(--gold); background: var(--gold-dim); }
+
+/* Big stat */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; border-radius: var(--radius-lg); overflow: hidden; margin-top: 40px; }
+@media (max-width: 820px) { .stats { grid-template-columns: 1fr; } }
+.stat { background: var(--bg-card); padding: 34px 28px; text-align: center; }
+.stat-num {
+  font-family: var(--font-heading); font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 3rem); color: var(--accent); line-height: 1;
+  margin-bottom: 12px;
+}
+.stat-num.gold { color: var(--gold); }
+.stat-label { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; }
+
+/* Callout strip */
+.strip {
+  margin-top: 28px; padding: 20px 28px;
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.2rem); color: #fff;
+  text-align: center;
+}
+.strip .arrow { color: var(--accent); padding: 0 10px; }
+
+.footnote { margin-top: 18px; font-size: 0.75rem; color: var(--text-dim); text-align: center; }
+
+/* Check list */
+.checks { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
+.check {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: clamp(0.92rem, 1.8vw, 1.02rem); color: var(--text-muted);
+}
+.check svg { width: 17px; height: 17px; stroke: var(--green); flex-shrink: 0; margin-top: 5px; }
+.check strong { color: var(--text); font-weight: 600; }
+
+/* Status badge */
+.badge-live {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--green); background: var(--green-dim);
+  padding: 3px 10px; border-radius: 100px; margin-bottom: 12px;
+}
+.badge-live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+/* Phase timeline */
+.phases { display: flex; flex-direction: column; gap: 2px; border-radius: var(--radius-lg); overflow: hidden; margin-top: 40px; }
+.phase {
+  display: grid; grid-template-columns: 150px 1fr; gap: 20px;
+  background: var(--bg-card); padding: 24px 28px; align-items: center;
+}
+@media (max-width: 700px) { .phase { grid-template-columns: 1fr; gap: 8px; } }
+.phase-tag {
+  font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; color: #fff;
+}
+.phase-tag span {
+  display: block; font-family: var(--font-body); font-weight: 600;
+  font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 4px;
+}
+.phase p { font-size: 0.88rem; color: var(--text-muted); }
+.phase.now { border-left: 2px solid var(--accent); }
+
+/* Two-column split */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-radius: var(--radius-lg); overflow: hidden; margin-top: 40px; }
+@media (max-width: 820px) { .split { grid-template-columns: 1fr; } }
+.split-col { background: var(--bg-card); padding: 32px; }
+.split-col h3 {
+  font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.split-col.you h3 { color: var(--gold); }
+.split-col.us h3 { color: var(--accent); }
+.split-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.split-col li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;
+}
+.split-col li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 9px;
+}
+.split-col.you li::before { background: var(--gold); }
+.split-col.us li::before { background: var(--accent); }
+
+/* Title slide */
+.title-slide { text-align: center; }
+.title-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  padding: 7px 18px; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 40px;
+}
+.title-badge .pulse {
+  width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.title-logo {
+  font-family: var(--font-heading); font-weight: 800;
+  font-size: clamp(3.6rem, 11vw, 7rem); color: #fff; line-height: 1;
+  letter-spacing: -0.02em; margin-bottom: 28px;
+}
+.title-logo span { color: var(--accent); }
+.title-tag {
+  font-family: var(--font-heading); font-weight: 700; font-style: italic;
+  font-size: clamp(1.15rem, 3vw, 1.7rem); color: var(--accent); margin-bottom: 36px;
+}
+.title-meta { font-size: 0.9rem; color: var(--text-muted); }
+.title-meta strong { color: var(--text); }
+
+/* Close slide */
+.close-slide { text-align: center; }
+.close-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.88rem;
+  padding: 14px 32px; border-radius: 100px; text-decoration: none;
+  transition: all 0.35s var(--ease); white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent); color: var(--bg);
+  box-shadow: 0 2px 16px rgba(0, 255, 255, 0.25);
+}
+.btn-primary:hover { background: #33DDFF; transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ══════════════════════════════════════════════════
+   HUD (controls)
+   ══════════════════════════════════════════════════ */
+.hud {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px;
+  background: linear-gradient(transparent, rgba(10, 25, 47, 0.9));
+  pointer-events: none;
+}
+.hud > * { pointer-events: auto; }
+
+.hud-counter {
+  font-family: var(--font-heading); font-size: 0.8rem; font-weight: 700;
+  color: var(--text-dim); min-width: 64px;
+}
+.hud-counter strong { color: var(--accent); }
+
+.hud-dots { display: flex; gap: 8px; }
+.hud-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-dim); opacity: 0.4; border: none; cursor: pointer;
+  transition: all 0.3s; padding: 0;
+}
+.hud-dot.active { background: var(--accent); opacity: 1; transform: scale(1.3); }
+.hud-dot:hover { opacity: 0.8; }
+
+.hud-arrows { display: flex; gap: 10px; }
+.hud-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+}
+.hud-btn:hover { border-color: var(--accent); color: var(--accent); }
+.hud-btn svg { width: 16px; height: 16px; }
+.hud-btn:disabled { opacity: 0.25; cursor: default; }
+.hud-btn:disabled:hover { border-color: var(--border); color: var(--text-muted); }
+
+.hint {
+  position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%);
+  z-index: 50; font-size: 0.7rem; letter-spacing: 0.1em;
+  color: var(--text-dim); text-transform: uppercase;
+  transition: opacity 0.6s; pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+@media (max-width: 700px) {
+  .hud { padding: 14px 16px; }
+  .hud-dots { display: none; }
+  .hint { display: none; }
+}
+
+/* Progress bar */
+.progress {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 60;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  transition: width 0.4s var(--ease); width: 0;
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ══════════════════════════════════════════════════
+   PRINT — all slides stacked
+   ══════════════════════════════════════════════════ */
+@media print {
+  html, body { overflow: visible; background: var(--bg); }
+  .deck { position: static; }
+  .slide {
+    position: static; opacity: 1; visibility: visible; transform: none;
+    page-break-after: always; min-height: 100vh; overflow: visible;
+  }
+  .st { opacity: 1; transform: none; }
+  .hud, .hint, .progress, .glow, .grain { display: none; }
+}
+</style>
+</head>
+
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+
+<div class="deck" id="deck">
+
+<!-- ═══ SLIDE 1 — TITLE ═══ -->
+<section class="slide" aria-label="Slide 1: Title">
+  <div class="slide-inner title-slide">
+    <div class="title-badge st"><span class="pulse"></span>Concept Deck &mdash; Lead-Gen Model &middot; Archived 2026</div>
+    <h1 class="title-logo st st1">Solvra<span>.</span></h1>
+    <p class="title-tag st st2">We generate the leads. You close the deals.</p>
+    <p class="title-meta st st3"><strong>Talan Mason</strong> &middot; Founder &middot; Spokane, WA</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 2 — PROBLEM ═══ -->
+<section class="slide" aria-label="Slide 2: The problem">
+  <div class="slide-inner">
+    <div class="label st">The Problem</div>
+    <h2 class="st st1">Home service companies are <em>starving</em> for good leads.</h2>
+    <p class="sub st st2">These are high-margin businesses &mdash; windows, HVAC, roofing, solar &mdash; and their growth bottleneck is always the same: a reliable source of real customers.</p>
+
+    <div class="cards cards-3 st st3">
+      <div class="card">
+        <h3>Shared-Lead Aggregators</h3>
+        <p>Angi and HomeAdvisor sell the same homeowner to four competitors at once. It's a race to the phone, and everyone loses except the aggregator.</p>
+      </div>
+      <div class="card">
+        <h3>Retainer Agencies</h3>
+        <p>Monthly fees, vanity-metric reports, zero accountability. The agency gets paid whether the phone rings or not.</p>
+      </div>
+      <div class="card">
+        <h3>DIY Advertising</h3>
+        <p>Owners boost posts and burn budgets guessing at Meta ads. No targeting, no funnel, no tracking &mdash; money in, nothing out.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 3 — THE MODEL ═══ -->
+<section class="slide" aria-label="Slide 3: The model">
+  <div class="slide-inner">
+    <div class="label st">The Model</div>
+    <h2 class="st st1">Exclusive leads, sold <em>per lead.</em></h2>
+    <p class="sub st st2">We own the entire funnel &mdash; ad campaigns, landing pages, qualification, tracking, and delivery. Buyers pay only for the leads we hand them. Nothing else.</p>
+
+    <div class="strip st st3">
+      Meta Ads <span class="arrow">&rarr;</span> Custom Landing Page <span class="arrow">&rarr;</span> Qualified Lead <span class="arrow">&rarr;</span> One Buyer's Phone
+    </div>
+
+    <div class="checks st st4">
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Exclusive</strong> &mdash; every lead goes to exactly one buyer. No races, no sharing.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Pay-per-lead</strong> &mdash; no retainers, no monthly minimums, no long-term contracts.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Qualified</strong> &mdash; name, phone, zip, project size, and timeline captured before it ever reaches the buyer.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 4 — THE MATH ═══ -->
+<section class="slide" aria-label="Slide 4: Unit economics">
+  <div class="slide-inner">
+    <div class="label st">The Math</div>
+    <h2 class="st st1">The margin <em>is</em> the business.</h2>
+
+    <div class="stats st st2">
+      <div class="stat">
+        <div class="stat-num">$15&ndash;35</div>
+        <div class="stat-label">Our cost to generate one exclusive windows lead via Meta ads</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num gold">$75&ndash;150</div>
+        <div class="stat-label">Market price for that same exclusive lead</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2&ndash;5&times;</div>
+        <div class="stat-label">Gross margin on every single lead delivered</div>
+      </div>
+    </div>
+
+    <div class="strip st st3">
+      $300 ad spend <span class="arrow">&rarr;</span> 10&ndash;15 exclusive leads <span class="arrow">&rarr;</span> $750&ndash;$2,250 revenue
+    </div>
+
+    <p class="footnote st st4">Model targets currently being validated in the Spokane windows pilot. Costs vary by vertical and market.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 5 — THE MARKET ═══ -->
+<section class="slide" aria-label="Slide 5: Why home services">
+  <div class="slide-inner">
+    <div class="label st">The Market</div>
+    <h2 class="st st1">High tickets make leads <em>cheap.</em></h2>
+    <p class="sub st st2">A full-home window replacement runs $10K&ndash;$20K+. One closed job pays for months of leads &mdash; which is why home service companies happily pay premium prices for exclusive ones.</p>
+
+    <div class="checks st st3">
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Beachhead: Windows.</strong> Founder-level insider knowledge of how window deals are sold and closed &mdash; we know exactly what a good lead looks like.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Expansion verticals:</strong> HVAC, roofing, solar, pest control &mdash; same funnel system, new audience and creative.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Constant demand.</strong> Homeowners never stop needing these services &mdash; the supply of good leads is the only thing that's scarce.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Geography-proof.</strong> Every city has the same companies with the same problem. The playbook repeats market after market.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 6 — THE MACHINE ═══ -->
+<section class="slide" aria-label="Slide 6: What's already built">
+  <div class="slide-inner">
+    <div class="label st">The Machine</div>
+    <h2 class="st st1">This isn't a <em>pitch-deck</em> company.</h2>
+    <p class="sub st st2">The infrastructure is already built and operating. A new client funnel goes from strategy call to live ads in 48 hours.</p>
+
+    <div class="cards cards-3 st st3">
+      <div class="card">
+        <span class="badge-live">Live</span>
+        <h3>Main Site</h3>
+        <p>solvramarketing.com &mdash; live today as a flat-price web design &amp; branding studio. Lead-gen positioning is this deck's proposed pivot.</p>
+      </div>
+      <div class="card">
+        <span class="badge-live">Built</span>
+        <h3>Funnel System</h3>
+        <p>First windows landing page built &mdash; mobile-first, Meta-pixel tracked, conversion optimized. Pilot pending.</p>
+      </div>
+      <div class="card">
+        <span class="badge-live">Live</span>
+        <h3>Internal CRM</h3>
+        <p>Pipeline, clients, invoicing, and contracts &mdash; custom-built, zero software overhead.</p>
+      </div>
+      <div class="card">
+        <span class="badge-live">Live</span>
+        <h3>Prospect Engine</h3>
+        <p>Automated pipeline that finds buyers: scrapes local companies, scores them, drafts personalized outreach.</p>
+      </div>
+      <div class="card">
+        <span class="badge-live">Built</span>
+        <h3>Ad Infrastructure</h3>
+        <p>Meta Business Suite and pixel tracking configured &mdash; campaigns launch on demand. No spend to date.</p>
+      </div>
+      <div class="card">
+        <span class="badge-live">Live</span>
+        <h3>Web Build Add-On</h3>
+        <p>Flat-rate custom sites as a bolt-on revenue stream &mdash; demo builder produces client previews in minutes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 7 — ROADMAP ═══ -->
+<section class="slide" aria-label="Slide 7: Roadmap">
+  <div class="slide-inner">
+    <div class="label st">Roadmap</div>
+    <h2 class="st st1">Prove it. Sell it. <em>Multiply it.</em></h2>
+
+    <div class="phases st st2">
+      <div class="phase now">
+        <div class="phase-tag"><span>Phase 1 &middot; Now</span>Prove It</div>
+        <p>Windows pilot in Spokane. Validate cost-per-lead against the model. Ads live, data in, decisions made on numbers &mdash; not hope.</p>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span>Phase 2 &middot; Next</span>Sell It</div>
+        <p>Sign the first lead buyers. Turn the pitch into a repeatable playbook: who to call, what to say, how leads get delivered and invoiced.</p>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span>Phase 3</span>Multiply It</div>
+        <p>Clone the funnel into HVAC, roofing, solar, and pest control. Same system, new creative &mdash; each vertical is a new revenue line.</p>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span>Phase 4</span>Scale It</div>
+        <p>Partner-led territories beyond Spokane. Sales partners own their markets; Solvra runs fulfillment behind every one of them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 8 — PARTNER OPPORTUNITY ═══ -->
+<section class="slide" aria-label="Slide 8: The partner opportunity">
+  <div class="slide-inner">
+    <div class="label st">Join Us</div>
+    <h2 class="st st1">We build the machine. <em>You sell the output.</em></h2>
+    <p class="sub st st2">Independent 1099 sales partners with real autonomy &mdash; your schedule, your relationships, your territory. This is a sales org, not a downline: nobody recruits under anybody.</p>
+
+    <div class="split st st3">
+      <div class="split-col you">
+        <h3>What You Do</h3>
+        <ul>
+          <li>Prospect home service companies in your market</li>
+          <li>Pitch the model &mdash; exclusive leads, pay-per-lead, zero risk</li>
+          <li>Close lead packages and own the client relationship</li>
+          <li>Work when and where you want &mdash; results are all that count</li>
+        </ul>
+      </div>
+      <div class="split-col us">
+        <h3>What Solvra Handles</h3>
+        <ul>
+          <li>Ad campaigns, landing pages, and lead qualification</li>
+          <li>Lead delivery, tracking dashboards, and reporting</li>
+          <li>Invoicing, contracts, and payment collection</li>
+          <li>Brand, marketing materials, and this entire tech stack</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9 — COMPENSATION ═══ -->
+<section class="slide" aria-label="Slide 9: Earnings model">
+  <div class="slide-inner">
+    <div class="label st">Compensation</div>
+    <h2 class="st st1">Commission with <em>no ceiling.</em></h2>
+
+    <div class="checks st st2">
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Commission on every lead package you sell</strong> &mdash; paid when the client pays.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Recurring share while your accounts stay active</strong> &mdash; sell once, earn as long as they keep buying leads.</span>
+      </div>
+      <div class="check">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><strong>Territory leadership for top performers</strong> &mdash; first partners get first pick as new markets open.</span>
+      </div>
+    </div>
+
+    <div class="strip st st3">
+      One account: 30 leads/mo &times; $100 <span class="arrow">&rarr;</span> $3,000/mo <span class="arrow">&rarr;</span> your 15% = <span style="color:var(--gold);">$450/mo recurring</span>
+    </div>
+    <div class="strip st st4" style="background:var(--gold-dim); border-color:rgba(245,166,35,0.25);">
+      Five accounts <span class="arrow" style="color:var(--gold);">&rarr;</span> <span style="color:var(--gold);">$2,250/mo</span> in recurring commission
+    </div>
+
+    <p class="footnote st st5">Illustrative example &mdash; final commission terms are set in the partner agreement.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 10 — CLOSE ═══ -->
+<section class="slide" aria-label="Slide 10: Close">
+  <div class="slide-inner close-slide">
+    <div class="label st" style="justify-content:center;">The Ask</div>
+    <h2 class="st st1" style="font-size:clamp(2.2rem, 6vw, 4rem);">Ground floor. Real product. <em>Open seats.</em></h2>
+    <p class="sub st st2" style="margin:0 auto;">Book a call, see the machine running, and decide for yourself. Early partners shape the company &mdash; and keep the best territories.</p>
+
+    <div class="close-cta st st3">
+      <a href="mailto:talan@solvramarketing.com" class="btn btn-primary">talan@solvramarketing.com</a>
+      <a href="tel:+15098245436" class="btn btn-outline">(509) 824-5436</a>
+      <a href="https://solvramarketing.com" class="btn btn-outline">solvramarketing.com</a>
+    </div>
+
+    <p class="title-meta st st4" style="margin-top:56px;"><strong>Solvra.</strong> &middot; Spokane, WA &middot; 2026</p>
+  </div>
+</section>
+
+</div>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-counter" aria-live="polite"><strong id="hudCur">1</strong> / <span id="hudTotal">10</span></div>
+  <div class="hud-dots" id="hudDots" role="group" aria-label="Slides"></div>
+  <div class="hud-arrows">
+    <button class="hud-btn" id="btnPrev" aria-label="Previous slide">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="hud-btn" id="btnNext" aria-label="Next slide">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+<div class="hint" id="hint">Use &larr; &rarr; arrow keys</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = document.getElementById('hudDots');
+  const cur = document.getElementById('hudCur');
+  const total = document.getElementById('hudTotal');
+  const prev = document.getElementById('btnPrev');
+  const next = document.getElementById('btnNext');
+  const hint = document.getElementById('hint');
+  const progress = document.querySelector('.progress');
+  let idx = 0;
+  let interacted = false;
+
+  total.textContent = slides.length;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'hud-dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    d.addEventListener('click', () => { interacted = true; hint.classList.add('hidden'); go(i); });
+    dots.appendChild(d);
+  });
+  const dotEls = Array.from(dots.children);
+
+  function go(n) {
+    if (slides[idx].classList.contains('active') && (n === idx || n < 0 || n >= slides.length)) return;
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === n));
+    dotEls.forEach((d, i) => {
+      d.classList.toggle('active', i === n);
+      if (i === n) d.setAttribute('aria-current', 'true');
+      else d.removeAttribute('aria-current');
+    });
+    idx = n;
+    cur.textContent = n + 1;
+    prev.disabled = n === 0;
+    next.disabled = n === slides.length - 1;
+    progress.style.width = ((n + 1) / slides.length * 100) + '%';
+    if (history.replaceState) history.replaceState(null, '', '#' + (n + 1));
+    if (!interacted) return;
+    hint.classList.add('hidden');
+  }
+
+  function step(dir) {
+    interacted = true;
+    hint.classList.add('hidden');
+    go(idx + dir);
+  }
+
+  prev.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    /* Space must activate a focused button — but arrows/PageUp/Home never
+       activate controls, so only Space needs the guard (else one click on a
+       HUD button kills arrow-key navigation while it keeps focus) */
+    if (e.key === ' ' && e.target instanceof Element && e.target.closest('button, a')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); step(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); step(-1); }
+    else if (e.key === 'Home') { e.preventDefault(); interacted = true; go(0); }
+    else if (e.key === 'End') { e.preventDefault(); interacted = true; go(slides.length - 1); }
+  });
+
+  // Touch swipe
+  let tx = 0, ty = 0;
+  document.addEventListener('touchstart', (e) => {
+    tx = e.changedTouches[0].clientX;
+    ty = e.changedTouches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - tx;
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // Init from hash
+  const h = parseInt((location.hash || '').replace('#', ''), 10);
+  go(!isNaN(h) && h >= 1 && h <= slides.length ? h - 1 : 0);
+})();
+</script>
+
+</body>
+</html>

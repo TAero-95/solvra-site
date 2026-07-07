@@ -7,11 +7,30 @@ Talan M. Mason — Solvra Marketing, Spokane WA
 - EIN: 42-1783738
 - GitHub: TAero-95
 
+## Business Model (updated July 2026 — pivot #3)
+Solvra is a **one-and-done web design & branding agency**: one-time flat-price websites, logo design, and brand kits for local businesses. NO retainers, NO subscriptions — clients own everything at handoff (code, domain, accounts). Core sales mechanism: **free demo before payment** (demo-builder + prospect-scraper flow). Jasmin does multiple hours/day of cold outreach to land clients; the site is the outreach destination.
+
+**Public flat pricing (on homepage):**
+- Landing Page $750 · Business Site (≤5 pages) $1,500 · Logo $350 · Brand Kit $650 · Full Launch bundle (site+logo+kit) $2,200 (save $300)
+- Optional care plan exists but is never required — anti-retainer positioning is the differentiator
+
+**Current status:**
+- Main site (`index.html`) repositioned July 2026 — "We build it first. You pay if you love it."
+- Prior lead-gen pivot assets kept in repo, unlisted/noindex, NOT linked from homepage: `windows.html` (windows lead funnel), `pitch.html` (lead-gen partner deck), `windows-ad-kit.html` (Meta campaign playbook). Windows pilot was never launched (no Formspree ID, no ad spend).
+- Old Stripe links below are from the retainer era; new one-time price links may be needed
+
 ## What This Repo Contains
-1. **Main marketing site** — solvramarketing.com (GitHub Pages)
-2. **CRM Dashboard** (`crm.html`) — single-file local CRM with localStorage
-3. **Demo Builder** (`demo-builder.html`) — configurator for quick static website demos
-4. **Prospect Scraper** (`tools/prospect-scraper.mjs`) — Node.js lead generation pipeline
+1. **Main marketing site** (`index.html`) — solvramarketing.com (GitHub Pages), one-and-done web design positioning; hero mini-site rotation, industry configurator, quote calculator, comparison table, FAQ (+ matching FAQPage JSON-LD)
+2. **Privacy policy** (`privacy.html`) — plain-English, linked from index/windows/thank-you footers (noindex,follow)
+3. **404 page** (`404.html`) — branded, served automatically by GitHub Pages
+4. **Thank-you page** (`thank-you.html`) — post-form conversion page; GA4 `generate_lead` + Meta Pixel Lead, sessionStorage-guarded against double-fire
+5. **Windows lead funnel** (`windows.html`) — ARCHIVED lead-gen pilot (noindex); form still has placeholder Formspree ID but now fails honestly (error state, no fake success, pixel only on real success); fabricated testimonials removed July 2026
+6. **Lead-gen pitch deck** (`pitch.html`) — ARCHIVED concept deck, labeled as such (noindex)
+7. **Windows ad kit** (`windows-ad-kit.html`) — internal Meta campaign playbook for the shelved pilot (noindex)
+8. **CRM Dashboard** (`crm.html`) — single-file local CRM with localStorage (noindex; still old palette — internal only, intentional)
+9. **Demo Builder** (`demo-builder.html`) — demo configurator; branding bubble/favicons updated to current palette July 2026
+10. **Prospect Scraper** (`tools/prospect-scraper.mjs`) — Node.js lead generation pipeline
+11. **SEO files** — `robots.txt`, `sitemap.xml`, `og-image-v2.png` (current share card; `og-image.jpg` is the retired one, kept so old shared links don't break)
 
 ## CRM (`crm.html`)
 Single HTML file, zero dependencies, all data in localStorage. Features:
@@ -27,7 +46,7 @@ Single HTML file, zero dependencies, all data in localStorage. Features:
 
 localStorage keys: `solvra_leads`, `solvra_prospects`, `solvra_clients`, `solvra_invoices`, `solvra_activity`, `solvra_settings`
 
-### Stripe Payment Links (in CRM settings)
+### Stripe Payment Links (in CRM settings — legacy web-build pricing)
 - LP Setup: `https://buy.stripe.com/8x29AM8HYdrR1aFdmAaAw01`
 - LP Monthly: `https://buy.stripe.com/8x24gscYe2NddXr0zOaAw03`
 - Std Setup: `https://buy.stripe.com/aFabIU1fwafF6uZ6YcaAw00`
@@ -68,7 +87,7 @@ Node.js 24+ single-file pipeline, zero npm deps (uses native fetch). Flow:
   - Vercel free-tier corrupts after several deploys — increment project version (v6 → v7) when that happens
 
 ## Working Preferences
-- Solo operator, no team — everything built for one person
+- Founder-led; operationally solo today, actively recruiting 1099 commission-based sales partners
 - Prefers single-file HTML tools over full-stack apps
 - No employee names in client-facing demos
 - Demo links should stay unlisted (no custom domains)

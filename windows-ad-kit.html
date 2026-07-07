@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows Pilot — Meta Ad Launch Kit | Solvra Internal</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A192F">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A192F'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300FFFF'/%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0A192F;
+  --bg-card: #112240;
+  --bg-elevated: #1B2B4B;
+  --accent: #00FFFF;
+  --accent-dim: rgba(0, 255, 255, 0.12);
+  --gold: #F5A623;
+  --gold-dim: rgba(245, 166, 35, 0.12);
+  --green: #34D399;
+  --green-dim: rgba(52, 211, 153, 0.12);
+  --red: #F87171;
+  --red-dim: rgba(248, 113, 113, 0.1);
+  --text: #EAEEF6;
+  --text-muted: #8A94A6;
+  --text-dim: #4A5568;
+  --border: rgba(138, 148, 166, 0.10);
+  --border-accent: rgba(0, 255, 255, 0.20);
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 120px;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.top {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.top-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-dim); border: 1px solid rgba(245,166,35,0.25);
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 0.68rem; font-weight: 700; color: var(--gold);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px;
+}
+h1 {
+  font-family: var(--font-heading); font-weight: 800;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); line-height: 1.1; color: #fff;
+  margin-bottom: 14px;
+}
+h1 em { font-style: italic; color: var(--accent); }
+.top-sub { color: var(--text-muted); max-width: 600px; font-size: 0.95rem; }
+
+/* Sections */
+section { margin-bottom: 56px; }
+.sec-label {
+  font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sec-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; color: var(--accent);
+}
+h2 {
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: 1.35rem; color: #fff; margin-bottom: 12px;
+}
+.sec-intro { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 24px; max-width: 640px; }
+
+/* Cards */
+.card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 24px 26px; margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+.card h3 {
+  font-family: var(--font-heading); font-size: 1rem; font-weight: 700;
+  color: #fff; margin-bottom: 8px;
+}
+.card p { font-size: 0.88rem; color: var(--text-muted); }
+
+/* Checklist */
+.check-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 10px;
+}
+.check-item input[type="checkbox"] {
+  width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0;
+  accent-color: #00CCCC; cursor: pointer;
+}
+.check-item label { cursor: pointer; }
+.check-item strong { color: var(--text); display: block; font-size: 0.92rem; }
+.check-item span { color: var(--text-muted); font-size: 0.84rem; }
+.check-item.blocker { border-left: 3px solid var(--red); }
+.check-item.done-style strong { text-decoration: line-through; opacity: 0.5; }
+
+/* Settings table */
+.settings { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; }
+.settings tr { background: var(--bg-card); }
+.settings tr:nth-child(even) { background: var(--bg-elevated); }
+.settings td {
+  padding: 13px 18px; font-size: 0.86rem; vertical-align: top;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+.settings td:first-child {
+  color: var(--text-dim); font-weight: 600; width: 34%;
+  text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;
+  padding-top: 16px;
+}
+.settings td:last-child { color: var(--text); }
+.settings .hl { color: var(--accent); font-weight: 600; }
+code { word-break: break-all; overflow-wrap: anywhere; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px; font-size: 0.82em; }
+@media (max-width: 640px) {
+  .settings, .settings tbody, .settings tr, .settings td { display: block; width: 100%; }
+  .settings td:first-child { padding-bottom: 2px; border-bottom: none; }
+  .settings td:last-child { padding-top: 0; }
+}
+
+/* Ad variant blocks */
+.ad {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); margin-bottom: 22px; overflow: hidden;
+}
+.ad-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+.ad-head h3 {
+  font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #fff;
+}
+.ad-head .angle {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-dim);
+  padding: 4px 12px; border-radius: 100px;
+}
+.ad-body { padding: 20px 22px; }
+.ad-field { margin-bottom: 18px; }
+.ad-field:last-child { margin-bottom: 0; }
+.ad-field-label {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ad-field-label span {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  color: var(--accent); font-family: var(--font-body);
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
+  padding: 4px 12px; border-radius: 100px; cursor: pointer;
+  transition: all 0.25s;
+}
+.copy-btn:hover { background: rgba(0,255,255,0.2); }
+.copy-btn.copied { background: var(--green-dim); border-color: rgba(52,211,153,0.3); color: var(--green); }
+.ad-text {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  font-size: 0.88rem; color: var(--text); white-space: pre-wrap;
+}
+.ad-note {
+  margin-top: 14px; padding: 12px 16px;
+  background: var(--gold-dim); border-radius: var(--radius);
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.ad-note strong { color: var(--gold); }
+
+/* Gates */
+.gate {
+  display: grid; grid-template-columns: 110px 1fr; gap: 18px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 10px;
+  align-items: start;
+}
+@media (max-width: 600px) { .gate { grid-template-columns: 1fr; gap: 8px; } }
+.gate-day {
+  font-family: var(--font-heading); font-weight: 800; font-size: 1.05rem; color: var(--accent);
+}
+.gate p { font-size: 0.87rem; color: var(--text-muted); }
+.gate strong { color: var(--text); }
+
+/* Verdict cards */
+.verdicts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 700px) { .verdicts { grid-template-columns: 1fr; } }
+.verdict { border-radius: var(--radius-lg); padding: 22px; border: 1px solid var(--border); }
+.verdict.green { background: var(--green-dim); border-color: rgba(52,211,153,0.25); }
+.verdict.yellow { background: var(--gold-dim); border-color: rgba(245,166,35,0.25); }
+.verdict.red { background: var(--red-dim); border-color: rgba(248,113,113,0.25); }
+.verdict h3 { font-family: var(--font-heading); font-size: 1rem; margin-bottom: 8px; }
+.verdict.green h3 { color: var(--green); }
+.verdict.yellow h3 { color: var(--gold); }
+.verdict.red h3 { color: var(--red); }
+.verdict p { font-size: 0.82rem; color: var(--text-muted); }
+.verdict .crit { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; color: var(--text); margin-bottom: 6px; }
+
+/* Callout */
+.callout {
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg); padding: 20px 24px; margin: 20px 0;
+  font-size: 0.9rem; color: var(--text);
+}
+.callout strong { color: var(--accent); }
+.callout.warn { background: var(--red-dim); border-color: rgba(248,113,113,0.25); }
+.callout.warn strong { color: var(--red); }
+
+ul.plain { list-style: none; }
+ul.plain li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 0.88rem; color: var(--text-muted); margin-bottom: 10px;
+}
+ul.plain li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<!-- ═══ HEADER ═══ -->
+<header class="top">
+  <div class="top-badge">Solvra Internal &middot; Do Not Share</div>
+  <h1>Windows Pilot &mdash; <em>Meta Ad Launch Kit</em></h1>
+  <p class="top-sub">Everything needed to launch, run, and judge the $140 Spokane windows pilot. $10/day &times; 14 days. The goal isn't revenue &mdash; it's one number: <strong style="color:var(--accent);">cost per qualified lead.</strong></p>
+</header>
+
+<!-- ═══ 1. PRE-FLIGHT ═══ -->
+<section id="preflight">
+  <div class="sec-label"><span class="sec-num">1</span> Pre-Flight &mdash; Do Not Launch Until All Checked</div>
+
+  <div class="check-item blocker">
+    <input type="checkbox" id="pf1"><label for="pf1">
+      <strong>Formspree form ID is live</strong>
+      <span>Create the form at formspree.io, replace <code>YOUR_FORM_ID</code> in windows.html, submit a test lead, confirm it hits your email.</span>
+    </label>
+  </div>
+  <div class="check-item blocker">
+    <input type="checkbox" id="pf2"><label for="pf2">
+      <strong>windows.html is deployed</strong>
+      <span>Push to GitHub Pages → live at solvramarketing.com/windows.html. Open it on your phone. Submit a test lead from mobile.</span>
+    </label>
+  </div>
+  <div class="check-item blocker">
+    <input type="checkbox" id="pf3"><label for="pf3">
+      <strong>Domain verified + Lead event confirmed</strong>
+      <span>Meta Business Settings → Brand Safety → Domains → verify solvramarketing.com. Then Events Manager → Test Events → submit the form → confirm the <code>Lead</code> event fires.</span>
+    </label>
+  </div>
+  <div class="check-item blocker">
+    <input type="checkbox" id="pf4"><label for="pf4">
+      <strong>A buyer is lined up (or you accept data-only)</strong>
+      <span>Window leads decay in hours. Call your window contact BEFORE launch: "I'm running a lead pilot — want the first 3 free to judge quality? After that they're $75 each." If no buyer, run it anyway — but it's a data purchase, not a revenue play.</span>
+    </label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="pf5"><label for="pf5">
+      <strong>Consumer-facing Facebook Page created</strong>
+      <span>The Page name shows on every ad. Homeowners trust "Spokane Window Savings" more than a marketing agency name. 5 minutes: create Page, add cover photo + profile image, done. Running from the Solvra page works but converts worse.</span>
+    </label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="pf6"><label for="pf6">
+      <strong>Lead notifications ON</strong>
+      <span>Formspree email notifications + phone notifications enabled. Speed-to-contact is the #1 driver of lead quality perception when you hand these to a buyer.</span>
+    </label>
+  </div>
+</section>
+
+<!-- ═══ 2. CAMPAIGN SETTINGS ═══ -->
+<section id="settings">
+  <div class="sec-label"><span class="sec-num">2</span> Campaign Setup &mdash; Exact Settings</div>
+  <p class="sec-intro">One campaign, one ad set, four ads. At $10/day, splitting budget across ad sets starves them all of data — let Meta's delivery system pick the winning ad instead. Menu names may differ slightly as Meta updates Ads Manager.</p>
+
+  <table class="settings">
+    <tr><td>Objective</td><td><span class="hl">Leads</span></td></tr>
+    <tr><td>Conversion location</td><td>Website</td></tr>
+    <tr><td>Performance goal</td><td>Maximize number of conversions</td></tr>
+    <tr><td>Conversion event</td><td><span class="hl">Lead</span> (fires on form submit — already wired into windows.html)</td></tr>
+    <tr><td>Special ad categories</td><td><span class="hl">None.</span> Window replacement is home improvement, not "Housing" (that's real estate/mortgage/insurance). If Meta auto-flags it, appeal — selecting Housing kills age/zip targeting.</td></tr>
+    <tr><td>Budget</td><td>$10/day, ad set level. Schedule: start 6:00 AM, no end date (you'll stop it manually at day 14).</td></tr>
+    <tr><td>Location</td><td>Spokane, WA <span class="hl">+20 miles</span> (pulls in Spokane Valley, Liberty Lake, Cheney, Mead, Airway Heights). Keep it Washington-side for the pilot — WA leads are cleanest to sell to a WA contractor.</td></tr>
+    <tr><td>Age</td><td>32 &ndash; 65+</td></tr>
+    <tr><td>Gender</td><td>All</td></tr>
+    <tr><td>Detailed targeting</td><td>Interests: <span class="hl">Home improvement</span>, <span class="hl">Renovation</span>, <span class="hl">Energy conservation</span>. Leave Advantage audience expansion ON — at this budget it helps more than it hurts.</td></tr>
+    <tr><td>Placements</td><td><span class="hl">Manual:</span> Facebook Feed, Instagram Feed, Facebook Marketplace, Facebook/IG Stories. <strong>Exclude Audience Network</strong> (junk clicks) and Reels (cheap but low-intent at small budgets).</td></tr>
+    <tr><td>Attribution</td><td>7-day click, 1-day view (default)</td></tr>
+    <tr><td>Destination URL</td><td>https://solvramarketing.com/windows.html</td></tr>
+    <tr><td>URL parameters</td><td><code>utm_source=meta&utm_campaign=windows-pilot&utm_content={{ad.name}}</code></td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Learning phase reality check:</strong> at $10/day the ad set may never fully exit learning. That's fine — the pilot still answers the CPL question. Do not restructure the campaign mid-flight; every edit resets learning and burns budget.
+  </div>
+</section>
+
+<!-- ═══ 3. AD VARIANTS ═══ -->
+<section id="ads">
+  <div class="sec-label"><span class="sec-num">3</span> Ad Variants &mdash; Copy &amp; Paste</div>
+  <p class="sec-intro">Four angles, one audience. Name each ad in Ads Manager exactly as titled below so the UTM tells you which angle won. Every claim is one we can honor no matter who buys the leads — free estimate, no pressure. No fake discounts.</p>
+
+  <!-- AD 1 -->
+  <div class="ad">
+    <div class="ad-head">
+      <h3>Ad 1 &mdash; "Drafty House"</h3>
+      <span class="angle">Pain / Energy</span>
+    </div>
+    <div class="ad-body">
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Primary Text</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Your windows shouldn't whistle when the wind blows.
+
+If your Spokane home still has its original windows, you're paying to heat the neighborhood every winter. New energy-efficient windows cut drafts, quiet the street noise, and lower the power bill.
+
+The estimate costs nothing. 60 seconds to request — a local window pro handles the rest. No pressure, no obligation.</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Headline</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Spokane: Free Window Replacement Estimate</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Description</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Local pros. 60 seconds. Zero obligation.</div>
+      </div>
+      <div class="ad-note"><strong>Image:</strong> cozy living room interior, big bright window, winter light. Warm and aspirational — not a product shot. CTA button: <strong>Get Quote</strong></div>
+    </div>
+  </div>
+
+  <!-- AD 2 -->
+  <div class="ad">
+    <div class="ad-head">
+      <h3>Ad 2 &mdash; "The Real Number"</h3>
+      <span class="angle">Cost Curiosity</span>
+    </div>
+    <div class="ad-body">
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Primary Text</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">What does window replacement actually cost in Spokane?
+
+Most homeowners guess way too high — and keep living with drafts, condensation, and windows that stick for years longer than they should.
+
+Get your real number with a free, no-pressure estimate from a local window pro. Takes about a minute to request.</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Headline</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">How Much Are New Windows? Find Out Free</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Description</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Free estimate. No pressure. Spokane area.</div>
+      </div>
+      <div class="ad-note"><strong>Image:</strong> split-frame or before/after style — old foggy window vs. clean new install. Curiosity angle pairs with contrast visuals. CTA button: <strong>Learn More</strong></div>
+    </div>
+  </div>
+
+  <!-- AD 3 -->
+  <div class="ad">
+    <div class="ad-head">
+      <h3>Ad 3 &mdash; "Sound Familiar?"</h3>
+      <span class="angle">Symptom Checklist</span>
+    </div>
+    <div class="ad-body">
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Primary Text</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">✓ Drafts near the couch
+✓ Condensation trapped between the panes
+✓ Windows painted shut since the 90s
+✓ Furnace running nonstop all winter
+
+Sound familiar? Spokane homeowners — get a free estimate on replacement windows from a local pro. Takes about a minute, and there's zero pressure to buy anything.</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Headline</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Time to Replace Those Old Windows?</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Description</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Free local estimate — fast and easy.</div>
+      </div>
+      <div class="ad-note"><strong>Image:</strong> close-up of condensation/fog between glass panes — instantly recognizable to anyone who has the problem. Highest thumb-stop potential of the four. CTA button: <strong>Get Quote</strong></div>
+    </div>
+  </div>
+
+  <!-- AD 4 -->
+  <div class="ad">
+    <div class="ad-head">
+      <h3>Ad 4 &mdash; "Pays You Back Twice"</h3>
+      <span class="angle">Value / Equity</span>
+    </div>
+    <div class="ad-body">
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Primary Text</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">New windows pay you back twice — lower energy bills every month, higher resale value when you sell.
+
+If you own a home in the Spokane area, request your free window replacement estimate today. A local pro follows up with a real number for your home.
+
+No spam. No pressure. Just the estimate.</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Headline</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Free Estimate: Replacement Windows in Spokane</div>
+      </div>
+      <div class="ad-field">
+        <div class="ad-field-label"><span>Description</span><button class="copy-btn" data-copy>Copy</button></div>
+        <div class="ad-text">Local. Fast. No obligation.</div>
+      </div>
+      <div class="ad-note"><strong>Image:</strong> attractive home exterior with clean modern windows, golden-hour light. Equity angle wants the "after" fantasy. CTA button: <strong>Get Quote</strong></div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Need the images?</strong> Free stock: Unsplash/Pexels ("window installation", "living room window", "condensation glass"). Or ask Claude to generate branded creatives through Canva. Square 1:1 (1080&times;1080) covers Feed + Marketplace; 9:16 (1080&times;1920) covers Stories. Start with 1:1 only if you want to keep it simple.
+  </div>
+</section>
+
+<!-- ═══ 4. FLIGHT PLAN ═══ -->
+<section id="flight">
+  <div class="sec-label"><span class="sec-num">4</span> Flight Plan &mdash; 14 Days, 3 Gates</div>
+  <p class="sec-intro">Daily routine: check leads, log them in the CRM, glance at spend. Total time: 10 minutes. Do NOT touch the campaign outside the gates — edits reset learning.</p>
+
+  <div class="gate">
+    <div class="gate-day">Days 1&ndash;3</div>
+    <p><strong>Hands off.</strong> Meta is exploring. CPL will look scary on day 1 — ignore it. Log every lead: name, phone valid? zip in service area? answered when called?</p>
+  </div>
+  <div class="gate">
+    <div class="gate-day">Day 3 Gate</div>
+    <p><strong>Kill obvious losers only.</strong> If an ad has spent $8+ with CTR under 0.8% and zero leads while others have leads — pause that ad. Otherwise leave everything alone.</p>
+  </div>
+  <div class="gate">
+    <div class="gate-day">Day 7 Gate</div>
+    <p><strong>Midpoint verdict.</strong> CPL ≤ $50 → keep running, change nothing. CPL over $50 → pause the weakest 2 ads, and if the landing page has 100+ visits with under 5% conversion, the page is the problem, not the ads.</p>
+  </div>
+  <div class="gate">
+    <div class="gate-day">Day 14</div>
+    <p><strong>Stop ads. Final scorecard.</strong> Pull the numbers: total spend, total leads, valid-phone rate, CPL by ad angle. The verdict below decides the next move.</p>
+  </div>
+</section>
+
+<!-- ═══ 5. SCORECARD ═══ -->
+<section id="scorecard">
+  <div class="sec-label"><span class="sec-num">5</span> The Verdict &mdash; What the Numbers Decide</div>
+  <p class="sec-intro">A "qualified lead" = valid phone number + zip in service area + real project intent (windows count &amp; timeline filled honestly). Junk leads don't count toward CPL math.</p>
+
+  <div class="verdicts">
+    <div class="verdict green">
+      <h3>GREEN — Scale</h3>
+      <span class="crit">CPL ≤ $35</span>
+      <p>Model validated. Sell the leads at $75&ndash;150, sign the first buyer, raise budget to $20&ndash;30/day, and update the pitch deck with REAL numbers. Slide 4 becomes fact.</p>
+    </div>
+    <div class="verdict yellow">
+      <h3>YELLOW — Iterate</h3>
+      <span class="crit">CPL $35&ndash;50</span>
+      <p>Close but not there. Take the winning angle, write 3 new variants of it, tighten targeting, run a second $70 test. Margin still works at $50 if leads sell for $100+.</p>
+    </div>
+    <div class="verdict red">
+      <h3>RED — Rework</h3>
+      <span class="crit">CPL &gt; $50 or junk</span>
+      <p>Don't scale a broken funnel. Diagnose: high CTR + no conversions = page problem. Low CTR = creative problem. Good CPL but junk phones = qualification problem. Fix, then re-test.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6. LEAD HANDLING ═══ -->
+<section id="leads">
+  <div class="sec-label"><span class="sec-num">6</span> Lead Handling SOP</div>
+  <ul class="plain">
+    <li><strong style="color:var(--text);">Within 15 minutes:</strong>&nbsp;lead hits your email → log it in the CRM (Prospecting or a "Pilot Leads" pipeline stage).</li>
+    <li><strong style="color:var(--text);">Within 1 hour:</strong>&nbsp;forward to the buyer via text + email: name, phone, zip, window count, timeline. Speed is the product — a 2-day-old lead is worthless.</li>
+    <li><strong style="color:var(--text);">Track disposition:</strong>&nbsp;did the buyer reach them? Set an appointment? Close? This data is your proof for the NEXT buyer pitch.</li>
+    <li><strong style="color:var(--text);">No buyer yet?</strong>&nbsp;Call each lead yourself within the hour: "Thanks for requesting an estimate — I'm confirming your info so the right local pro can call you." Keeps the lead warm AND verifies quality.</li>
+  </ul>
+
+  <div class="callout warn">
+    <strong>Never let leads rot.</strong> Every lead that goes uncontacted poisons the pilot data and wastes real ad dollars. If you can't respond same-day during the flight window, pause the campaign.
+  </div>
+</section>
+
+<footer style="border-top:1px solid var(--border); padding-top:24px; color:var(--text-dim); font-size:0.75rem;">
+  Solvra Marketing &middot; Internal playbook &middot; Windows Pilot 2026 &middot; Checkboxes save locally in this browser.
+</footer>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* Copy buttons — copy the sibling .ad-text content */
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const field = btn.closest('.ad-field');
+      const text = field.querySelector('.ad-text').innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+    });
+  });
+
+  /* Persist checkboxes in localStorage */
+  const KEY = 'solvra_adkit_windows';
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    if (state[cb.id]) {
+      cb.checked = true;
+      cb.closest('.check-item').classList.add('done-style');
+    }
+    cb.addEventListener('change', () => {
+      state[cb.id] = cb.checked;
+      localStorage.setItem(KEY, JSON.stringify(state));
+      cb.closest('.check-item').classList.toggle('done-style', cb.checked);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

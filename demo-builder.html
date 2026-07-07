@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solvra Demo Builder — Create Client Website Previews</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E1A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300D4FF'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A192F'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif' font-weight='800' font-size='42' fill='white'%3ES%3C/text%3E%3Ccircle cx='49' cy='50' r='5' fill='%2300FFFF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,11 +16,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --b-bg: #0A0E1A;
-  --b-card: #1A1F2E;
-  --b-surface: #131826;
-  --b-accent: #00D4FF;
-  --b-accent-dim: rgba(0, 212, 255, 0.12);
+  --b-bg: #0A192F;
+  --b-card: #112240;
+  --b-surface: #0D1F3A;
+  --b-accent: #00FFFF;
+  --b-accent-dim: rgba(0, 255, 255, 0.12);
   --b-gold: #F5A623;
   --b-gold-dim: rgba(245, 166, 35, 0.12);
   --b-text: #EAEEF6;
@@ -589,9 +589,9 @@ body {
 <div class="builder-topbar">
   <div class="builder-logo">
     <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
-      <rect width="64" height="64" rx="14" fill="#0A0E1A"/>
+      <rect width="64" height="64" rx="14" fill="#0A192F"/>
       <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="42" fill="white">S</text>
-      <circle cx="49" cy="50" r="5" fill="#00D4FF"/>
+      <circle cx="49" cy="50" r="5" fill="#00FFFF"/>
     </svg>
     Solvra <span>Demo Builder</span>
   </div>
@@ -1401,13 +1401,13 @@ img{max-width:100%;display:block}
 
 /* SOLVRA DEMO BUBBLE */
 .solvra-bubble{position:fixed;bottom:20px;right:20px;z-index:9999;font-family:'Inter',sans-serif}
-.solvra-bubble-btn{width:48px;height:48px;border-radius:50%;background:#0A0E1A;border:2px solid #00D4FF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:transform 0.3s}
+.solvra-bubble-btn{width:48px;height:48px;border-radius:50%;background:#0A192F;border:2px solid #00FFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:transform 0.3s}
 .solvra-bubble-btn:hover{transform:scale(1.08)}
 .solvra-bubble-btn svg{width:22px;height:22px}
-.solvra-popup{position:absolute;bottom:58px;right:0;width:240px;background:#0A0E1A;border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s,visibility 0.3s}
+.solvra-popup{position:absolute;bottom:58px;right:0;width:240px;background:#0A192F;border:1px solid rgba(0,255,255,0.2);border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s,visibility 0.3s}
 .solvra-popup.open{opacity:1;visibility:visible;transform:translateY(0)}
 .solvra-popup p{color:#EAEEF6;font-size:13px;margin-bottom:10px;line-height:1.5}
-.solvra-popup a{display:block;text-align:center;padding:10px;background:#00D4FF;color:#0A0E1A;border-radius:8px;font-weight:700;font-size:14px;transition:transform 0.2s}
+.solvra-popup a{display:block;text-align:center;padding:10px;background:#00FFFF;color:#0A192F;border-radius:8px;font-weight:700;font-size:14px;transition:transform 0.2s}
 .solvra-popup a:hover{transform:translateY(-1px)}
 
 /* ANIMATIONS */
@@ -1574,9 +1574,9 @@ ${gallerySection}
   </div>
   <div class="solvra-bubble-btn" onclick="document.getElementById('solvraPopup').classList.toggle('open')">
     <svg viewBox="0 0 64 64" fill="none">
-      <rect width="64" height="64" rx="14" fill="#0A0E1A"/>
+      <rect width="64" height="64" rx="14" fill="#0A192F"/>
       <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="42" fill="white">S</text>
-      <circle cx="49" cy="50" r="5" fill="#00D4FF"/>
+      <circle cx="49" cy="50" r="5" fill="#00FFFF"/>
     </svg>
   </div>
 </div>
